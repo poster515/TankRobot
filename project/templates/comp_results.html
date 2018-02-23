@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Member Results
+{% endblock %}
+
+{% block main %}
+    <h2>{{ comp_name }} Results</h2>
+    <table>
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <th>Weight Class</th>
+                <th>Age</th>
+                <th>Squat</th>
+                <th>Bench</th>
+                <th>Deadlift</th>
+            </tr>
+
+<!--result["first_name"], result["last_name"], user["weight"], user["age"], result["squat"], result["bench"], result["deadlift"]-->
+
+            {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }} {{ user[1] }}</td>
+                    <td>{{ user[2] }} kg</td>
+                    <td>{{ user[3] }} yrs</td>
+                    <td>{{ user[4] }} lbs</td>
+                    <td>{{ user[5] }} lbs</td>
+                    <td>{{ user[6] }} lbs</td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

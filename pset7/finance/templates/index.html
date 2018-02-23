@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <table>
+        <tbody>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>CUM. TOTAL</th>
+            </tr>
+            {% for row in index_info %}
+            <!--index_info.append([row["symbol"], row["name"], row["numshares"], round(stock_info["price"], 2), stock_total])-->
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+                <td>CASH</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ cash }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><span style='font-weight:bold;'>{{ total }}</span></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,12 @@
+1.  stdint.h allows users to utilize integer types with specified widths, with no padding. This gives the programmer much more control in how and where variables are declared and stored.
+2.  These types are, as perviously stated, defined in stdint.h and provide an intuitive method of declaring exact-width specified integers.
+3.  From bmp.h: sizeof(BYTE) = 1, sizeof(DWORD) = 4, sizeof(LONG) = 4, sizeof(WORD) = 2
+4.  From copy.c: bf.bfType must equal 0x4d42
+5.  bfSize is the size of the entire .bmp file, while biSize is just the size of the info header.
+6.  A negative bi.biHeight indicates that the origin is at the upper-left corner, and the rows are indexed from a top-down perspective.
+7.  The bi.biBitCount field contains the number of bits-per-pixel.
+8.  If the specified files name do not exist, or cannot be opened in the specified mode, fopen will return NULL.
+9.  Because we are reading a specified number of bytes into the bf and bi structures, we only want to open a single structures-worth of bytes per read. This is why the third argument is 1.
+10. If bi.biWidth is 3, the padding will equal 3 (indicating we need to pad with 3 bytes)
+11. fseek() will advance the file pointer to, in this case, skip over any padding.
+12. SEEK_CUR is the current position of the file pointer

@@ -1,0 +1,37 @@
+<table>
+    <tbody>
+        <!-- Create the first table row, containing just table headers. -->
+        <!-- s1 = rows, s2 = columns. -->
+
+        <!-- First row. -->
+        <tr>
+            <th width="50"></th> <!-- Need a blank column to preserve alignment -->
+            <th width="50"></th> <!-- Null character string -->
+            {% for char in s2 %}
+                <th width="50">{{ char }}</th> <!-- create a table header for each character of s2. -->
+            {% endfor %}
+        </tr>
+
+        <!-- Initialize second row -->
+        <tr>
+            <th width="50"></th> <!-- Blank character -->
+            {% for j in range(0, s2|length + 1) %}
+                <td width="50">{{ matrix[0][j][0] }}</td>
+            {% endfor %}
+        </tr>
+
+
+        <!-- Now create the rest of the table rows -->
+        {% for i in range(1, s1|length + 1) %} <!-- start at 1 because we already did the zeroth (i.e., first) row -->
+        <tr>
+            <th width="50">{{ s1[i - 1] }}</th> <!-- Make this a table header for consistency -->
+
+            {% for k in range(0, s2|length + 1) %}
+                <td width="50">{{ matrix[i][k][0] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+
+    </tbody>
+</table>

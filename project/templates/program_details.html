@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Program Details
+{% endblock %}
+
+{% block main %}
+    <h3>Program Details: {{ program_details[0][6] }}</h3>
+
+     <label class="weekLabel" for="week_menu">Week:</label>
+            <select name="week_menu" id="week_menu">
+                <option selected="selected" value="option1">1</option>
+                <option value="option2">2</option>
+                <option value="option3">3</option>
+                <option value="option4">4</option>
+                <option value="option5">5</option>
+                <option value="option6">6</option>
+            </select>
+    <table id="program_table">
+        <tbody>
+            <tr>
+                <th>Day</th>
+                <th>Sets</th>
+                <th>Reps</th>
+                <th>%Max</th>
+                <th>RPE</th>
+                <th>Exercise</th>
+            </tr>
+            {% for row in program_details %}
+<!--[row["day"], row["sets"], row["reps"], row["percent_max"], row["RPE"], row["week"], row["program_name"], row["exercise_name"]]-->
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}%</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[7] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

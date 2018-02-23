@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Programs
+{% endblock %}
+
+{% block main %}
+    <h1>Search for Athletic Programs</h1>
+    <!-- http://getbootstrap.com/css/#forms -->
+    <form id="form">
+        <div class="form-group">
+            <label class="sr-only" for="programs">Search Athletic Programs</label>
+            <input class="form-control" id="programs" placeholder="try 'powerlifting'" type="text" autocomplete="off"/>
+        </div>
+    </form>
+{% endblock %}

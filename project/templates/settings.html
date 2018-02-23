@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register New User
+{% endblock %}
+
+{% block main %}
+        <div>
+            <label><b>Change/Update</b></label>
+            <select id="settings_menu">
+                <option value=""></option>
+                <option value="password">Password</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+                <option value="bench1RM">Bench 1 Rep Max</option>
+                <option value="squat1RM">Squat 1 Rep Max</option>
+                <option value="squat1RM">Deadlift 1 Rep Max</option>
+            </select>
+        </div>
+        <form action="/settings_change" method="post">
+            <ul id="settings_table">
+
+            </ul>
+            <button class="btn btn-primary" type="submit">Confirm Changes</button>
+        </form>
+{% endblock %}
