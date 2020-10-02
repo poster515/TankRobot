@@ -1,4 +1,0 @@
-0. Dimensions allowed are between 3x3 and 9x9, inclusive.
-1. A 2D array is used to represent the game board.
-2. The greet() function is called to greet players at the start.
-3. Need to implement init(), draw(), move(), and won().
