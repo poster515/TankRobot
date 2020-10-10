@@ -100,19 +100,3 @@ $(document).ready(function() {
 
 
 });
-
-
-// Search database for typeahead's suggestions
-function search(query, syncResults, asyncResults)
-{
-    // alert(query);
-    // Get places matching query (asynchronously)
-    let parameters = {
-        q: query
-    };
-
-    // "data" below is a JSON object returned from the callback to /search
-    $.getJSON("/search_prog", parameters, function(data, textStatus, jqXHR) {
-        asyncResults(data);
-    });
-}

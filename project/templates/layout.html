@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<!-- POWERLIFTING PAGE-->
     <head>
-
         <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta -->
         <meta charset="utf-8"/>
         <meta content="initial-scale=1, width=device-width" name="viewport"/>
@@ -35,40 +33,17 @@
         <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
         <script>{% block chart %}{% endblock %}</script>
 
-        <title>CS50 Powerlifting: {% block title %}{% endblock %}</title>
+        <title>Chrimbus Tank: {% block title %}{% endblock %}</title>
+
+        <style>
+          body {
+            background-image: background.jpg;
+          }
+        </style>
 
     </head>
 
     <body>
-
-        <nav class="navbar navbar-expand-md navbar-light bg-light border">
-            <a class="navbar-brand" href="/"><span class="blue">C</span><span class="red">S</span><span class="yellow">5</span><span class="green">0</span> <span class="red">Powerlifting</span></a>
-            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-
-                <ul class="navbar-nav mr-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/programs">Programs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/comps">Competitions</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/members">Competitors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/rss">RSS Feed</a></li>
-                </ul>
-
-                <ul class="navbar-nav ml-auto mt-2">
-                {% if session.user_id %}
-                    <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/settings">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/personal_results">My Meet Results</a></li>
-                {% else %}
-                    <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
-                {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-
-                </ul>
-
-            </div>
-        </nav>
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -81,7 +56,9 @@
         {% endwith %}
 
         <main class="container p-5">
-            {% block main %}{% endblock %}
+            {% block main %}
+
+            {% endblock %}
         </main>
 
     </body>
