@@ -18,7 +18,7 @@ if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
 
 # import sql db functions (file should be in same directory)
-from .sql_funcs import create_connection, create_table, sql_table_func
+from sql_funcs import create_connection, create_table, sql_table_func
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
