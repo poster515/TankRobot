@@ -165,8 +165,10 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
+    # NOTE: all variables declared here are global in the scope of this file.
+
     # Configure application
-    global app = Flask(__name__)
+    app = Flask(__name__)
 
     # global double-ended queue for tank commands
     tank_cmd_queue = deque()
@@ -175,13 +177,12 @@ if __name__ == "__main__":
     # consist of [id][user_name][IP_address]
     # I think all we need is a relative db, don't really care about the absolute path
     database = "./tank_control.db"
-    global db_conn = create_connection(database)
+    db_conn = create_connection(database)
     if db_conn:
         create_table(db_conn, sql_table_func())
     else:
         print("Error creating table, exiting program.")
         sys.exit()
-
 
     # finally, as part of setup, call drive_tank. this function
     # constantly searches the tank_cmd_queue for commands, and then
