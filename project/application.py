@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Configure application
     app = Flask(__name__)
-
+    app.run()
     # global double-ended queue for tank commands
     tank_cmd_queue = deque()
 
