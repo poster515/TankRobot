@@ -14,8 +14,8 @@ DEV = True
 if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
 
-# import sql db functions
-from project.sql_funcs import *
+# import sql db functions (file should be in same directory)
+from .sql_funcs import *
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
@@ -65,7 +65,7 @@ def drive_tank():
         except:
             # print("Waiting for tank command...")
             pass
-            
+
 # finally, as part of setup, call drive_tank. this function
 # constantly searches the tank_cmd_queue for commands, and then
 # executes them.
