@@ -17,14 +17,6 @@ DEV = True
 if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
 
-# Ensure responses aren't cached
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
-
 # now create some tank drive specific callback functions.
 # these are called from the javascript callback scripts on the
 # drive.html page.
@@ -40,6 +32,40 @@ def drive_tank():
         except:
             # print("Waiting for tank command...")
             pass
+
+if __name__ == "__main__":
+    # NOTE: all variables declared here are global in the scope of this file.
+
+    # Configure application
+    app = Flask(__name__)
+
+    # global double-ended queue for tank commands
+    tank_cmd_queue = deque()
+
+    # initialize new db connection and create the only table.
+    # consist of [id][user_name][IP_address]
+    # I think all we need is a relative db, don't really care about the absolute path
+    database = "./tank_control.db"
+    db_conn = create_connection(database)
+    if db_conn:
+        create_table(db_conn, sql_table_func())
+    else:
+        print("Error creating table, exiting program.")
+        sys.exit()
+
+    # finally, as part of setup, call drive_tank. this function
+    # constantly searches the tank_cmd_queue for commands, and then
+    # executes them.
+    drive_tank()
+
+# Ensure responses aren't cached
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
+
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
@@ -163,28 +189,3 @@ def errorhandler(e):
 # listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
-
-if __name__ == "__main__":
-    # NOTE: all variables declared here are global in the scope of this file.
-
-    # Configure application
-    app = Flask(__name__)
-
-    # global double-ended queue for tank commands
-    tank_cmd_queue = deque()
-
-    # initialize new db connection and create the only table.
-    # consist of [id][user_name][IP_address]
-    # I think all we need is a relative db, don't really care about the absolute path
-    database = "./tank_control.db"
-    db_conn = create_connection(database)
-    if db_conn:
-        create_table(db_conn, sql_table_func())
-    else:
-        print("Error creating table, exiting program.")
-        sys.exit()
-
-    # finally, as part of setup, call drive_tank. this function
-    # constantly searches the tank_cmd_queue for commands, and then
-    # executes them.
-    drive_tank()
