@@ -141,7 +141,5 @@ def pump_test():
 
     for _ in range(2):
         pump(5)
-    except KeyboardInterrupt:
-        pass
-
+    
     GPIO.cleanup()

@@ -5,13 +5,44 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/login" method="post">
-      <button class="btn btn-left" type="submit">Left</button>
-      <button class="btn btn-right" type="submit">Right</button>
-      <button class="btn btn-forward" type="submit">Forward</button>
-      <button class="btn btn-reverse" type="submit">Reverse</button>
-      <button class="btn btn-shot" type="submit">Shot!</button>
-    </form>
+<!-- Display the countdown timer in an element -->
+      <p id="timer"></p>
+
+      <script>
+      // get some interval constants
+      const n_minutes = 2; // i.e., 2 minute drive intervals
+      const ms_per_n_minutes = 1000 * 60 * n_minutes;
+
+      // get the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC, with leap seconds ignored,
+      // then add the number of milliseconds in N minutes.
+      const now_plus_N_minutes = Date.now() + ms_per_n_minutes; //units are milliseconds
+
+      // Update the count down every 1 second
+      var x = setInterval(function() {
+
+        // Find the distance between now and the count down date
+        var distance = now_plus_N_minutes - Date.now();
+
+        // Time calculations for minutes and seconds
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Display the result in the element with id="demo"
+        document.getElementById("demo").innerHTML = minutes + "m " + seconds + "s ";
+
+        // If the count down is finished, write some text
+        if (distance <= 0) {
+          clearInterval(x);
+          document.getElementById("timer").innerHTML = "EXPIRED";
+        }
+      }, 1000);
+      </script>
+      <a href=# id=left class="btn btn-left">Left</a>
+      <a href=# id=right class="btn btn-right">Right</a>
+      <a href=# id=forard class="btn btn-forward">Forward</a>
+      <a href=# id=reverse class="btn btn-reverse">Reverse</a>
+      <a href=# id=shot class="btn btn-shot"">Shot!</a>
+
     <!-- Example of displaying multiples items from flask -->
     <table width="500" align="left">
         <tbody>

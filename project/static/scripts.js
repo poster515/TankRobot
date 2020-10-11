@@ -18,6 +18,13 @@ $(document).ready(function() {
         }
     });
 
+    // create button-specific callbacks for driving the tank
+    $('a#left').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_left', { left: True }); });
+    $('a#right').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_right', { right: True }); });
+    $('a#forward').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_forward', { forward: True }); });
+    $('a#reverse').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_reverse', { reverse: True }); });
+    $('a#shot').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_shot', { shot: True }); });
+
     $("#programs").focus();
 
     $('#week_menu').on('change', function(x) {

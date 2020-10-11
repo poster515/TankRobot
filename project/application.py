@@ -1,19 +1,24 @@
 import sqlite3
-from sqlite3 import Error
 from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify
-from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
-#----------------------------------------------------------------
-import feedparser
-from projects.sql_funcs import * #
 from datetime import datetime, timedelta
-
+from collections import deque
 import string
 import os, sys
 
-user_list = []
+# bool for when we're doing dev work off the raspberry pi
+DEV = True
+
+if not DEV:
+    from tank_cmd import left, right, forward, reverse, shot
+
+# import sql db functions
+from project.sql_funcs import *
+
+# global double-ended queue for tank commands
+tank_cmd_queue = deque()
 
 # Configure application
 app = Flask(__name__)
@@ -28,18 +33,16 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
-
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-
-Session(app)
+#
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
 
 # initialize new db connection and create the only tale.
 # consist of [id][user_name][device specific something (IP address?)]
 # database = r"C:\sqlite\db\pythonsqlite.db"
 # I think all we need is a relative db, don't really care about the absolute path
-database = r"./sqlite.db"
+database = "./tank_control.db"
 db_conn = create_connection(database)
 if db_conn:
     create_table(db_conn, sql_table_func())
@@ -47,16 +50,36 @@ else:
     print("Error creating table, exiting program.")
     sys.exit()
 
+# now create some tank drive specific callback functions.
+# these are called from the javascript callback scripts on the
+# drive.html page.
+def drive_tank():
+    while True:
+        try:
+            # grab next function to be executed
+            command = tank_cmd_queue.pop() # pops from right
+            if not DEV:
+                command() # execute function
+            else:
+                print("Next tank command is: {}".format(command.__name__))
+        except:
+            # print("Waiting for tank command...")
+            pass
+            
+# finally, as part of setup, call drive_tank. this function
+# constantly searches the tank_cmd_queue for commands, and then
+# executes them.
+drive_tank()
+
 @app.route("/", methods = ["GET", "POST"])
 def index():
     """Show Home Page"""
-    # Forget any user_id
-    session.clear()
-
     if request.method == "POST":
         # try to to grab user info from form and post it to DB
         try:
-            user_name=session["user_name"]
+            # user_name=session["user_name"]
+            # let's just use request object without session, not passing anything sensitive here
+            user_name = request.form['username']
         except KeyError:
             # not sure how this could break but oh well
             flash("Could not find user name - please enter a valid user name.")
@@ -68,8 +91,9 @@ def index():
             # then this person can drive!
             redirect("/drive")
         else:
-            # they have to wait.
-            db.execute("INSERT :user_name INTO users", user_name=user_name)
+            # they have to wait. grab ip address and push to DB
+            print("User {} must wait, IP = {}".format(user_name, request.remote_addr))
+            db.execute("INSERT (:user_name, :ip_addr) INTO users", user_name=user_name, ip_addr=request.remote_addr)
             flash("Added {} to queue! We'll let you know when it's your turn.".format(user_name))
             return redirect("/wait")
         return redirect("/drive")
@@ -89,8 +113,12 @@ def wait():
     # grab all users currently waiting
     users = db.execute("SELECT * from users")
 
-    try:
-        user_name=session["user_name"]
+    if request.cookies.get("user_name"):
+        user_name = request.cookies.get("user_name")
+    else:
+        user_name = None
+
+    if user_name is not None:
         # grab number of users ahead of this one
         num_users = 0
         for i in len(users):
@@ -98,23 +126,39 @@ def wait():
                  break
              else:
                  num_users += 1
+        resp = make_response(render_template("wait.html", user_name=None, num_users=len(users)))
+        resp.set_cookie("user_name", user_name)
         return render_template("wait.html", user_name=user_name, num_users=num_users)
-    except KeyError:
+    else:
         # if user not registered yet, just display total number of waitees
         users = db.execute("SELECT * from users")
-        return render_template("wait.html", user_name=None, num_users=len(users))
+        resp = make_response(render_template("wait.html", user_name=None, num_users=len(users)))
+        return resp
 
-@app.route("/history")
-def history():
-    # TODO: display the history from all users
-    rows = db.execute("SELECT * FROM competitors INNER JOIN comps on comps.comp_id = competitors.comp_id WHERE 1")
+@app.route('/_left')
+def left():
+    if request.args.get('left', False, type=bool):
+        tank_cmd_queue.appendleft(left)
 
-    users = []
+@app.route('/_right')
+def right():
+    if request.args.get('right', False, type=bool):
+        tank_cmd_queue.appendleft(right)
 
-    for row in rows:
-        users.append([row["first_name"], row["last_name"], row["weight"], row["age"], row["name"], row["date"], row["comp_id"]])
+@app.route('/_forward')
+def forward():
+    if request.args.get('forward', False, type=bool):
+        tank_cmd_queue.appendleft(forward)
 
-    return render_template("members.html", users=users)
+@app.route('/_reverse')
+def reverse():
+    if request.args.get('reverse', False, type=bool):
+        tank_cmd_queue.appendleft(reverse)
+
+@app.route('/_shot')
+def shot():
+    if request.args.get('shot', False, type=bool):
+        tank_cmd_queue.appendleft(shot)
 
 @app.route("/drive", methods = ["GET"])
 def drive():
@@ -140,40 +184,6 @@ def drive():
         return redirect("/wait")
 
 
-@app.route("/prog_details")
-def prog_details():
-
-    if "program" not in session or session["program"] == None:
-        print("No session cookie named 'program'.")
-
-        session["program"] = request.args.get("q")
-        rows = db.execute("SELECT * FROM programs INNER JOIN program_names on program_names.program_num = programs.program_num INNER JOIN exercise_names on exercise_names.exercise_num = programs.exercise_num WHERE program_names.program_name = :sug and programs.week = '1'",
-        sug=request.args.get("q"))
-
-        print("Established cookie named 'program'.")
-
-        program_details = []
-        # day	sets	reps	percent_max	RPE	exercise_num	program_num	week	program_name	exercise_name
-        for row in rows:
-            print(row["day"])
-            program_details.append([row["day"], row["sets"], row["reps"], row["percent_max"], row["RPE"], row["week"], row["program_name"], row["exercise_name"]])
-
-        try:
-            print("attempting to print webpage")
-            return render_template("program_details.html", program_details=program_details)
-
-        except:
-            print("Could not obtain search criteria.")
-            return render_template("programs.html")
-
-    else:
-        print("Session cookie named 'program' EXISTS!")
-        # TODO: find way to get users 1RM for each exercise and provide them to user
-
-        rows = db.execute("SELECT * FROM programs INNER JOIN program_names on program_names.program_num = programs.program_num INNER JOIN exercise_names on exercise_names.exercise_num = programs.exercise_num WHERE program_names.program_name = :sug and programs.week = :week",
-            sug=session["program"],
-            week=request.args.get("q"))
-        return jsonify(rows)
 
 def errorhandler(e):
     """Handle error"""
