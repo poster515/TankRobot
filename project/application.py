@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # finally, as part of setup, call drive_tank. this function
     # constantly searches the tank_cmd_queue for commands, and then
     # executes them.
-    drive_tank()
+    # drive_tank()
 
 # Ensure responses aren't cached
 @app.after_request
