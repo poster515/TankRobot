@@ -8,31 +8,14 @@ from collections import deque
 import string
 import os, sys
 
-# Configure application
-app = Flask(__name__)
+# import sql db functions (file should be in same directory)
+from sql_funcs import create_connection, create_table, sql_table_func
 
 # bool for when we're doing dev work off the raspberry pi
 DEV = True
 
 if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
-
-# import sql db functions (file should be in same directory)
-from sql_funcs import create_connection, create_table, sql_table_func
-
-# global double-ended queue for tank commands
-tank_cmd_queue = deque()
-
-# initialize new db connection and create the only table.
-# consist of [id][user_name][IP_address]
-# I think all we need is a relative db, don't really care about the absolute path
-database = "./tank_control.db"
-db_conn = create_connection(database)
-if db_conn:
-    create_table(db_conn, sql_table_func())
-else:
-    print("Error creating table, exiting program.")
-    sys.exit()
 
 # Ensure responses aren't cached
 @app.after_request
@@ -182,6 +165,23 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
+    # Configure application
+    global app = Flask(__name__)
+
+    # global double-ended queue for tank commands
+    tank_cmd_queue = deque()
+
+    # initialize new db connection and create the only table.
+    # consist of [id][user_name][IP_address]
+    # I think all we need is a relative db, don't really care about the absolute path
+    database = "./tank_control.db"
+    global db_conn = create_connection(database)
+    if db_conn:
+        create_table(db_conn, sql_table_func())
+    else:
+        print("Error creating table, exiting program.")
+        sys.exit()
+
 
     # finally, as part of setup, call drive_tank. this function
     # constantly searches the tank_cmd_queue for commands, and then
