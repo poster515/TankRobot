@@ -8,6 +8,9 @@ from collections import deque
 import string
 import os, sys
 
+# Configure application
+app = Flask(__name__)
+
 # bool for when we're doing dev work off the raspberry pi
 DEV = True
 
@@ -15,32 +18,13 @@ if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
 
 # import sql db functions (file should be in same directory)
-from .sql_funcs import *
+from .sql_funcs import create_connection, create_table, sql_table_func
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
 
-# Configure application
-app = Flask(__name__)
-
-# Generate secret key for application
-app.secret_key = os.urandom(24)
-
-# Ensure responses aren't cached
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
-#
-# app.config["SESSION_FILE_DIR"] = mkdtemp()
-# app.config["SESSION_PERMANENT"] = False
-# app.config["SESSION_TYPE"] = "filesystem"
-
-# initialize new db connection and create the only tale.
-# consist of [id][user_name][device specific something (IP address?)]
-# database = r"C:\sqlite\db\pythonsqlite.db"
+# initialize new db connection and create the only table.
+# consist of [id][user_name][IP_address]
 # I think all we need is a relative db, don't really care about the absolute path
 database = "./tank_control.db"
 db_conn = create_connection(database)
@@ -49,6 +33,14 @@ if db_conn:
 else:
     print("Error creating table, exiting program.")
     sys.exit()
+
+# Ensure responses aren't cached
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 # now create some tank drive specific callback functions.
 # these are called from the javascript callback scripts on the
@@ -65,11 +57,6 @@ def drive_tank():
         except:
             # print("Waiting for tank command...")
             pass
-
-# finally, as part of setup, call drive_tank. this function
-# constantly searches the tank_cmd_queue for commands, and then
-# executes them.
-drive_tank()
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
@@ -193,3 +180,10 @@ def errorhandler(e):
 # listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+if __name__ == "__main__":
+
+    # finally, as part of setup, call drive_tank. this function
+    # constantly searches the tank_cmd_queue for commands, and then
+    # executes them.
+    drive_tank()
