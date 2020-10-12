@@ -14,11 +14,17 @@ from sql_funcs import create_connection, create_table, sql_table_func
 # bool for when we're doing dev work off the raspberry pi
 DEV = True
 
+# control debug print statements (Flask does a lot of this anyway)
+DEBUG = True
+
 if not DEV:
     from tank_cmd import left, right, forward, reverse, shot
 
 # Configure application
 app = Flask(__name__)
+
+# Generate secret key for application
+app.secret_key = os.urandom(24)
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
