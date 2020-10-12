@@ -4,6 +4,10 @@ nav .navbar-brand
     font-size: xx-large;
 }
 
+body {
+    background-image: url("/static/background.jpg");
+}
+
 /* colors for brand */
 nav .navbar-brand .blue
 {
