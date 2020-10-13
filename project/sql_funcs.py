@@ -27,8 +27,8 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
-        c.commit()
     except:
+        print("Error creating SQLite table, exiting.")
         sys.exit()
 
 def sql_table_func():

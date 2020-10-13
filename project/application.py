@@ -1,6 +1,5 @@
 import sqlite3
-from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify
-from flask_session import Session
+from flask import Flask, flash, redirect, render_template, request, url_for, session, make_response, jsonify
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -30,8 +29,6 @@ app.secret_key = os.urandom(24)
 # app.config["SESSION_FILE_DIR"] = mkdtemp()
 # app.config["SESSION_PERMANENT"] = False
 # app.config["SESSION_TYPE"] = "filesystem"
-#
-# print("Started a new session")
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
@@ -84,8 +81,9 @@ def index():
             print("User {} at {} requested to sign up to drive...".format(user_name, request.remote_addr))
             print("Type of name and IP are {} and {}".format(type(user_name), type(request.remote_addr)))
         except (AssertionError, KeyError):
+            print("Could not obtain user name from form.")
             flash("Please enter a valid user name.")
-            redirect("/")
+            redirect(url_for("/"))
 
         # first check if the user already existsin DB, then redirect them to wait Page
         exists = db_conn.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", user_name, request.remote_addr)
@@ -170,7 +168,7 @@ def wait():
         # grab number of users ahead of this one
         num_users = 0
         for name in user_names:
-             if names == user["user_name"]:
+             if name == user_name:
                  break
              else:
                  num_users += 1
