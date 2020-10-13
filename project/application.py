@@ -221,3 +221,5 @@ if __name__ == "__main__":
     # constantly searches the tank_cmd_queue for commands, and then
     # executes them.
     # drive_tank()
+else:
+    print("Could not find entry point.")
