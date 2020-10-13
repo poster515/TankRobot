@@ -214,7 +214,7 @@ for code in default_exceptions:
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 
     # finally, as part of setup, call drive_tank. this function
     # constantly searches the tank_cmd_queue for commands, and then
