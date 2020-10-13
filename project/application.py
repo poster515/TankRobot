@@ -150,9 +150,6 @@ def drive():
         assert next_user == user_name
         assert next_user_IP == IP_addr
         flash("Thanks {}! It's your turn to drive!".format(user_name))
-        # don't forget to remove that user from the DB
-        db_conn.execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
-        db_conn.commit()
         return render_template("drive.html", user=user_name)
 
     except AssertionError:
@@ -161,9 +158,17 @@ def drive():
 
 @app.route("/drive_timeout")
 def drive_timeout():
-    # clear session data (i.e., user_name) and redirect to the home page
-    session.clear()
-    return redirect(url_for("/"))
+    try:
+        # try to remove that user from the DB
+        user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        print("Deleting {} from IP {} from DB".format(user_name, IP_addr))
+        db_conn.execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+        db_conn.commit()
+    except KeyError:
+        # user_name not found in the session
+        flash("You haven't signed up yet!")
+    return redirect(url_for("index"))
 
 @app.route("/wait")
 def wait():

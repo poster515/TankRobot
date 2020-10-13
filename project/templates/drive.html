@@ -14,7 +14,7 @@
 
       <script>
       // get some interval constants
-      const n_minutes = 2; // i.e., 2 minute drive intervals
+      const n_minutes = 1; // i.e., 1 minute drive intervals
       const ms_per_n_minutes = 1000 * 60 * n_minutes;
 
       // get the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC, with leap seconds ignored,
@@ -38,6 +38,7 @@
         if (distance <= 0) {
           clearInterval(x);
           document.getElementById("timer").innerHTML = "EXPIRED";
+          $.get('/drive_timeout', function(data) { /* do nothing */});
         }
       }, 1000);
       </script>
