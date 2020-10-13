@@ -2,9 +2,13 @@
 // Execute when the DOM is fully loaded
 $(document).ready(function() {
 
-    $('a#test').bind('mousedown', function() {
+    // $('a#test').bind('mousedown', function() {
+    //   $.getJSON('/left_start', function(data) { /* do nothing */});
+    //   return false;
+    // });
+    document.getElementById("test").addEventListener("mousedown", function(){
       $.getJSON('/left_start', function(data) { /* do nothing */});
-      return true;
+      return false;
     });
     // $('a#test').bind('mouseup', function() {
     //   $.getJSON('/left_stop', function(data) { /* do nothing */});
