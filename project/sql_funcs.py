@@ -14,6 +14,7 @@ def create_connection(db_file):
         conn = sqlite3.connect(db_file)
         return conn
     except:
+        print("Couldn't connect to database file.")
         sys.exit()
 
     return conn

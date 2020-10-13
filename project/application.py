@@ -85,8 +85,11 @@ def index():
             flash("Please enter a valid user name.")
             redirect(url_for("index"))
 
-        # first check if the user already existsin DB, then redirect them to wait Page
-        exists = db_conn.cursor().execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", (user_name,), (request.remote_addr,)).fetchall()
+        # first check if the user already existsin DB, then redirect them to wait page.
+        # need to create new connection, since connections are all thread-specific.
+        db_conn = create_connection(database)
+        cur = db_conn.cursor()
+        exists = cur.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", (user_name,), (request.remote_addr,)).fetchall()
 
         if len(exists) > 0:
             # they have to wait
