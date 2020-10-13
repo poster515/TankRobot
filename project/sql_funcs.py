@@ -27,11 +27,12 @@ def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
+        c.commit()
     except:
         sys.exit()
 
 def sql_table_func():
-    return """ CREATE TABLE IF NOT EXISTS projects (
+    return """ CREATE TABLE IF NOT EXISTS users (
                                         id integer PRIMARY KEY,
                                         user_name text NOT NULL,
-                                        ip_addr text ); """
+                                        ip_addr text NOT NULL ); """

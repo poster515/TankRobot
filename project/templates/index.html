@@ -6,7 +6,9 @@
 
 
 {% block main %}
-      <!-- action = "/" should be a POST request to the base root-->
+      {% if user_name %}
+          <div><h3>Welcome back {{ user_name }}!</h3></div>
+      {% endif %}
       <form action="/" method="post">
           <div class="form-group">
               <input autocomplete="off" autofocus class="form-control" name="user_name" placeholder="Type your name!" type="text" required>

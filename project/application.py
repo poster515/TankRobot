@@ -71,25 +71,37 @@ def index():
     if request.method == "POST":
         # try to to grab user info from form and post it to DB
         try:
-            # user_name=session["user_name"]
-            # let's just use request object without session, not passing anything sensitive here
             user_name = request.form['username']
-        except KeyError:
-            # not sure how this could break but oh well
-            flash("Could not find user name - please enter a valid user name.")
+            assert len(user_name) > 0
+            session["user_name"] = user_name
+            print("User {} at {} requested to sign up to drive...".format(user_name, request.remote_addr))
+            print("Type of name and IP are {} and {}".format(type(user_name), type(request.remote_addr)))
+        except (AssertionError, KeyError):
+            flash("Please enter a valid user name.")
             redirect("/")
 
-        # first, check if there any users waiting already
-        users = db.execute("SELECT * from users")
-        if len(users) == 0:
+        # first check if the user already existsin DB, then redirect them to wait Page
+        exists = db_conn.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", user_name, request.remote_addr)
+        if len(exists) > 0:
+            # they have to wait
+            flash("Already added {} to queue! We'll let you know when it's your turn.".format(user_name))
+            return redirect(url_for("wait", user=user_name, IP_addr=request.remote_addr))
+
+        # otherwise insert user and IP address into db
+        db_conn.execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
+        db_conn.commit()
+
+        # now grab all users, grab the bottommost entry, and grab the user name
+        next_user = db_conn.execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM user);")
+
+        print("Next driver eligible: {}".format(next_user))
+        if next_user == user_name:
             # then this person can drive!
-            redirect("/drive")
+            print("{} can drive!".format(next_user))
+            redirect(url_for("drive"))
         else:
-            # they have to wait. grab ip address and push to DB
-            print("User {} must wait, IP = {}".format(user_name, request.remote_addr))
-            db.execute("INSERT (:user_name, :ip_addr) INTO users", user_name=user_name, ip_addr=request.remote_addr)
             flash("Added {} to queue! We'll let you know when it's your turn.".format(user_name))
-            return redirect("/wait")
+            return redirect(url_for("wait"))
         return redirect("/drive")
 
     # User reached route via GET (as by clicking a link or via redirect)
@@ -97,36 +109,70 @@ def index():
         # see if this user has already registered
         try:
             user_name=session["user_name"]
+            print("User {} is already signed up and requested home page.".format(user_name))
             return render_template("index.html", user_name=user_name)
+
         except KeyError:
             # if not registered yet, just display the generic home page
             return render_template("index.html", user_name=None)
 
+@app.route("/drive", methods = ["GET"])
+def drive():
+    user_name = ""
+    try:
+        user_name = session["user_name"]
+
+    except KeyError:
+        # user_name not found in the session, has NOT RIGHT to drive the Chrimbus Tank
+        flash("You haven't signed up yet!")
+        return redirect(url_for("/"))
+
+    # grab the bottommost entry, and grab the user name
+    next_user = db_conn.execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM users);")
+
+    try:
+        # make sure it's this user
+        assert next_user == user_name
+        flash("Thanks {}! It's your turn to drive!".format(user_name))
+        # don't forget to remove that user from the DB
+        db_conn.execute("DELETE FROM users WHERE user_name = ?", user_name)
+        db_conn.commit()
+        return render_template("drive.html", user=user_name)
+
+    except AssertionError:
+        flash("It's not your turn to drive, {}!".format(user_name))
+        return render_template("drive.html")
+
+@app.route("/drive_timeout")
+def drive_timeout():
+    # clear session data (i.e., user_name) and redirect to the home page
+    session.clear()
+    return redirect(url_for("/"))
+
 @app.route("/wait")
 def wait():
     # grab all users currently waiting
-    users = db.execute("SELECT * from users")
+    user_names = db_conn.execute("SELECT user_name FROM users")
 
-    if request.cookies.get("user_name"):
-        user_name = request.cookies.get("user_name")
-    else:
+    try:
+        user_name = session["user_name"]
+    except KeyError:
         user_name = None
 
     if user_name is not None:
         # grab number of users ahead of this one
         num_users = 0
-        for i in len(users):
-             if users["user_name"] == user["user_name"]:
+        for name in user_names:
+             if names == user["user_name"]:
                  break
              else:
                  num_users += 1
-        resp = make_response(render_template("wait.html", user_name=None, num_users=len(users)))
-        resp.set_cookie("user_name", user_name)
+        # should already have a session cookie with this user name
         return render_template("wait.html", user_name=user_name, num_users=num_users)
     else:
         # if user not registered yet, just display total number of waitees
-        users = db.execute("SELECT * from users")
-        resp = make_response(render_template("wait.html", user_name=None, num_users=len(users)))
+        rows = db_conn.execute("SELECT * FROM users")
+        resp = make_response(render_template("wait.html", user_name=None, num_users=len(rows)))
         return resp
 
 @app.route('/_left')
@@ -153,31 +199,6 @@ def reverse():
 def shot():
     if request.args.get('shot', False, type=bool):
         tank_cmd_queue.appendleft(shot)
-
-@app.route("/drive", methods = ["GET"])
-def drive():
-    # display the control icons for driving the tank
-    try:
-        # get current user name
-        user_name = session["user_name"]
-
-        # get next entry in db
-        next_user_name = db.execute("SELECT * ")
-
-        # make sure it's this user
-        assert next_user_name["user_name"] == user_name
-
-        # don't forget to remove that user from the DB
-        db.execute("REMOVE :user_name from users", user_name = user_name)
-
-        flash("Thanks {}! It's your turn to drive!".format(user_name))
-        return render_template("drive.html", user=user_name)
-
-    except (KeyError, AssertionError):
-        flash("Sorry, you can't skip the line!".format(user_name))
-        return redirect("/wait")
-
-
 
 def errorhandler(e):
     """Handle error"""

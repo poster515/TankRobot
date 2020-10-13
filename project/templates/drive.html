@@ -1,10 +1,14 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Drive!
+    Drive the Chrimbus Tank!
 {% endblock %}
 
 {% block main %}
+
+      {% if user_name %}
+          <div><h3>Welcome {{ user_name }}!</h3></div>
+      {% endif %}
 <!-- Display the countdown timer in an element -->
       <p id="timer"></p>
 
@@ -28,7 +32,7 @@
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // Display the result in the element with id="demo"
-        document.getElementById("demo").innerHTML = minutes + "m " + seconds + "s ";
+        document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
 
         // If the count down is finished, write some text
         if (distance <= 0) {
