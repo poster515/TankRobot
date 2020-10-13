@@ -46,6 +46,25 @@
       <a href=# id=forard class="btn btn-forward">Forward</a>
       <a href=# id=reverse class="btn btn-reverse">Reverse</a>
       <a href=# id=shot class="btn btn-shot"">Shot!</a>
+      <script type=text/javascript>
+      $(function() {
+        $('a#test').bind('click', function() {
+          $.getJSON('/background_process_test',
+                  function(data) {
+                //do nothing
+              });
+              return false;
+            });
+          });
+      </script>
+
+      <div class='container'>
+      <h3>Test</h3>
+          <form>
+              <a href=# id=test><button class='btn btn-default'>Test</button></a>
+          </form>
+
+      </div>
 
     <!-- Example of displaying multiples items from flask -->
     <table width="500" align="left">

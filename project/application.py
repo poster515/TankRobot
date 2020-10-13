@@ -191,6 +191,12 @@ def wait():
     else:
         return render_template("wait.html", user_name=None, num_users=len(user_names))
 
+ # background process happening without any refreshing
+@app.route('/background_process_test')
+def background_process_test():
+    print("Hello")
+    return "nothing"
+
 @app.route('/_left_start')
 def left_start():
     # TODO make a separate DB table that contains the user actually driving.
