@@ -89,7 +89,7 @@ def index():
         # need to create new connection, since connections are all thread-specific.
         db_conn = create_connection(database)
         cur = db_conn.cursor()
-        exists = cur.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", (user_name,), (request.remote_addr,)).fetchall()
+        exists = cur.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", (user_name, request.remote_addr)).fetchall()
 
         if len(exists) > 0:
             # they have to wait
@@ -100,8 +100,8 @@ def index():
         db_conn.cursor().execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
         db_conn.commit()
 
-        # now grab all users, grab the bottommost entry, and grab the user name
-        next_user = db_conn.execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM user);")
+        # grab the user with the lowest id number
+        next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM user);").fetchone()
 
         print("Next driver eligible: {}".format(next_user))
         if next_user == user_name:
