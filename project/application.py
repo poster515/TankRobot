@@ -111,7 +111,7 @@ def index():
         else:
             flash("Added {} to queue! We'll let you know when it's your turn.".format(user_name))
             return redirect(url_for("wait"))
-        return redirect("/drive")
+        return redirect(url_for("drive"))
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -127,6 +127,8 @@ def index():
 
 @app.route("/drive", methods = ["GET"])
 def drive():
+    db_conn = create_connection(database)
+
     user_name = ""
     try:
         user_name = session["user_name"]
@@ -137,7 +139,7 @@ def drive():
         return redirect(url_for("/"))
 
     # grab the bottommost entry, and grab the user name
-    next_user = db_conn.execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);")
+    next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
 
     try:
         # make sure it's this user
@@ -161,11 +163,13 @@ def drive_timeout():
 @app.route("/wait")
 def wait():
     # grab all users currently waiting
-    user_names = db_conn.execute("SELECT user_name FROM users")
+    db_conn = create_connection(database)
+    user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
     try:
         user_name = session["user_name"]
     except KeyError:
+        print("Wait: Could not find user_name in session.")
         user_name = None
 
     if user_name is not None:
