@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session, make_response, jsonify
+from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -25,6 +26,8 @@ app = Flask(__name__)
 
 # Generate secret key for application
 app.secret_key = os.urandom(24)
+
+Session(app)
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
