@@ -19,8 +19,14 @@ $(document).ready(function() {
     });
 
     // create button-specific callbacks for driving the tank
-    $('#left').bind('mousedown', function() { $.get($SCRIPT_ROOT + '/_left_start'); });
-    $('#left').bind('mouseup', function() { $.get($SCRIPT_ROOT + '/_left_stop'); });
+    document.getElementById("left_button").bind('mousedown', function() {
+                                                                    alert("Left mousedown event!");
+                                                                    $.get($SCRIPT_ROOT + '/_left_start');
+                                                                  });
+    document.getElementById("left_button").bind('mouseup', function() {
+                                                                    alert("Left mouseup event!");
+                                                                    $.get($SCRIPT_ROOT + '/_left_stop');
+                                                                  });
     $('a#right').bind('mousedown', function() { $.get($SCRIPT_ROOT + '/_right'); });
     $('a#forward').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_forward', { forward: True }); });
     $('a#reverse').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_reverse', { reverse: True }); });
