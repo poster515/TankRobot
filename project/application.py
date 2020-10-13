@@ -75,7 +75,7 @@ def index():
     if request.method == "POST":
         # try to to grab user info from form and post it to DB
         try:
-            user_name = request.form['username']
+            user_name = request.form['user_name']
             assert len(user_name) > 0
             session["user_name"] = user_name
             print("User {} at {} requested to sign up to drive...".format(user_name, request.remote_addr))
@@ -83,7 +83,7 @@ def index():
         except (AssertionError, KeyError):
             print("Could not obtain user name from form.")
             flash("Please enter a valid user name.")
-            redirect(url_for("/"))
+            redirect(url_for("index"))
 
         # first check if the user already existsin DB, then redirect them to wait Page
         exists = db_conn.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", user_name, request.remote_addr)
