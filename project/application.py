@@ -162,15 +162,16 @@ def drive_timeout():
 
 @app.route("/wait")
 def wait():
-    # grab all users currently waiting
-    db_conn = create_connection(database)
-    user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
     try:
         user_name = session["user_name"]
     except KeyError:
         print("Wait: Could not find user_name in session.")
         user_name = None
+
+    # grab all users currently waiting
+    db_conn = create_connection(database)
+    user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
     if user_name is not None:
         # grab number of users ahead of this one
@@ -183,10 +184,7 @@ def wait():
         # should already have a session cookie with this user name
         return render_template("wait.html", user_name=user_name, num_users=num_users)
     else:
-        # if user not registered yet, just display total number of waitees
-        rows = db_conn.execute("SELECT * FROM users")
-        resp = make_response(render_template("wait.html", user_name=None, num_users=len(rows)))
-        return resp
+        return render_template("wait.html", user_name=None, num_users=len(user_names))
 
 @app.route('/_left')
 def left():
