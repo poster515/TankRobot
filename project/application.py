@@ -206,6 +206,8 @@ def left_start():
         print("User {} started turning left".format(user_name))
     except:
         print("non-registered user has requested to start")
+    # javascript requires a return statement
+    return "Success"
 
 @app.route('/left_stop')
 def left_stop():
@@ -217,7 +219,7 @@ def left_stop():
     except:
         print("non-registered user has requested to stop")
 
-
+    return "Success"
 
 @app.route('/_right')
 def right():

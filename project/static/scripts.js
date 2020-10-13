@@ -6,10 +6,10 @@ $(document).ready(function() {
       $.getJSON('/left_start', function(data) { /* do nothing */});
       return false;
     });
-    $('a#test').bind('mouseup', function() {
-      $.getJSON('/left_stop', function(data) { /* do nothing */});
-      return false;
-    });
+    // $('a#test').bind('mouseup', function() {
+    //   $.getJSON('/left_stop', function(data) { /* do nothing */});
+    //   return false;
+    // });
     // $('a#test').bind('click', function() {
     //   $.getJSON('/background_process_test', function(data) { /* do nothing */});
     //   return false;
