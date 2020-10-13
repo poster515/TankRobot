@@ -27,6 +27,10 @@ app = Flask(__name__)
 # Generate secret key for application
 app.secret_key = os.urandom(24)
 
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+
 print("Started a new session")
 Session(app)
 
