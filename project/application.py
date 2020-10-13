@@ -98,7 +98,7 @@ def index():
             return redirect(url_for("wait", user=user_name, IP_addr=request.remote_addr))
 
         # otherwise insert user and IP address into db
-        db_conn.cursor().execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
+        db_conn.cursor().execute("INSERT INTO users VALUES (?, ?, null)", (user_name, request.remote_addr))
         db_conn.commit()
 
         # grab the user with the lowest id number
