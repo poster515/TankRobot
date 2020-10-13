@@ -34,6 +34,6 @@ def create_table(conn, create_table_sql):
 
 def sql_table_func():
     return """ CREATE TABLE IF NOT EXISTS users (
-                                        id integer PRIMARY KEY,
-                                        user_name text NOT NULL,
-                                        ip_addr text NOT NULL ); """
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        user_name TEXT NOT NULL,
+                                        ip_addr TEXT NOT NULL ); """
