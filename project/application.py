@@ -86,14 +86,17 @@ def index():
             redirect(url_for("index"))
 
         # first check if the user already existsin DB, then redirect them to wait Page
-        exists = db_conn.execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", user_name, request.remote_addr)
+        exists = db_conn.cursor().execute("SELECT * FROM users WHERE user_name = ? AND IP_addr = ?", (user_name,), (request.remote_addr,)).fetchall()
+
+        sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 140044210014016 and this is thread id 140044039489280.
+
         if len(exists) > 0:
             # they have to wait
             flash("Already added {} to queue! We'll let you know when it's your turn.".format(user_name))
             return redirect(url_for("wait", user=user_name, IP_addr=request.remote_addr))
 
         # otherwise insert user and IP address into db
-        db_conn.execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
+        db_conn.cursor().execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
         db_conn.commit()
 
         # now grab all users, grab the bottommost entry, and grab the user name
