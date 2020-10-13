@@ -139,7 +139,7 @@ def drive():
         return redirect(url_for("/"))
 
     # grab the bottommost entry, and grab the user name
-    next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+    next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
 
     try:
         # make sure it's this user
