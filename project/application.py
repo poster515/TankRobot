@@ -101,7 +101,7 @@ def index():
         db_conn.commit()
 
         # grab the user with the lowest id number
-        next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM user);").fetchone()
+        next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM user);").fetchone()
 
         print("Next driver eligible: {}".format(next_user))
         if next_user == user_name:
@@ -137,7 +137,7 @@ def drive():
         return redirect(url_for("/"))
 
     # grab the bottommost entry, and grab the user name
-    next_user = db_conn.execute("SELECT user_name FROM users WHERE id = (SELECT min(id) FROM users);")
+    next_user = db_conn.execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);")
 
     try:
         # make sure it's this user
