@@ -7,7 +7,7 @@ $(document).ready(function() {
     //   return false;
     // });
     document.getElementById("test").addEventListener("mousedown", function(){
-      $.getJSON('/left_start', function(data) { /* do nothing */});
+      $.getJSON('/background_process_test', function(data) { /* do nothing */});
       return false;
     });
     // $('a#test').bind('mouseup', function() {
