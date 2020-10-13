@@ -101,7 +101,7 @@ def index():
         db_conn.commit()
 
         # grab the user with the lowest id number
-        next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
 
         print("Next driver eligible: {}".format(next_user))
         if next_user == user_name:
