@@ -26,12 +26,12 @@ app = Flask(__name__)
 
 # Generate secret key for application
 app.secret_key = os.urandom(24)
-
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-
-print("Started a new session")
+#
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+#
+# print("Started a new session")
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
@@ -219,8 +219,8 @@ for code in default_exceptions:
 
 if __name__ == "__main__":
     print("Attempting to start app...")
-    sess = Session()
-    sess.init_app(app)
+    # sess = Session()
+    # sess.init_app(app)
     app.run(debug=True)
 
     # finally, as part of setup, call drive_tank. this function
