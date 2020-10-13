@@ -27,6 +27,7 @@ app = Flask(__name__)
 # Generate secret key for application
 app.secret_key = os.urandom(24)
 
+print("Started a new session")
 Session(app)
 
 # global double-ended queue for tank commands
