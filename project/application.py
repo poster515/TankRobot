@@ -191,15 +191,37 @@ def wait():
     else:
         return render_template("wait.html", user_name=None, num_users=len(user_names))
 
-@app.route('/_left')
-def left():
-    if request.args.get('left', False, type=bool):
-        tank_cmd_queue.appendleft(left)
+@app.route('/_left_start')
+def left_start():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} started turning left".format(user_name))
+    except:
+        print("non-registered user has requested to start")
+
+@app.route('/_left_stop')
+def left_stop():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} stopped turning left".format(user_name))
+    except:
+        print("non-registered user has requested to stop")
+
+
 
 @app.route('/_right')
 def right():
-    if request.args.get('right', False, type=bool):
-        tank_cmd_queue.appendleft(right)
+    try:
+        user_name = session["user_name"]
+        print("User {} steered right".format(user_name))
+    except:
+        print("non-registered user has requested to drive right")
+
+    tank_cmd_queue.appendleft(right)
 
 @app.route('/_forward')
 def forward():

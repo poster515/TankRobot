@@ -19,11 +19,12 @@ $(document).ready(function() {
     });
 
     // create button-specific callbacks for driving the tank
-    $('a#left').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_left', { left: True }); });
-    $('a#right').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_right', { right: True }); });
-    $('a#forward').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_forward', { forward: True }); });
-    $('a#reverse').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_reverse', { reverse: True }); });
-    $('a#shot').bind('click', function() { $.getJSON($SCRIPT_ROOT + '/_shot', { shot: True }); });
+    $('#left').bind('mousedown', function() { $.get('/_left_start'); });
+    $('#left').bind('mouseup', function() { $.get('/_left_stop'); });
+    $('a#right').bind('mousedown', function() { $.get($SCRIPT_ROOT + '/_right'); });
+    $('a#forward').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_forward', { forward: True }); });
+    $('a#reverse').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_reverse', { reverse: True }); });
+    $('a#shot').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_shot', { shot: True }); });
 
     $("#programs").focus();
 
