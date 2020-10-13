@@ -142,7 +142,8 @@ def drive():
         return redirect(url_for("index"))
 
     # grab the bottommost entry, and grab the user name and their IP
-    (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
+    print("SQL output: {}".format(db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]))
+    next_user, next_user_IP, _ = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
 
     try:
         # make sure it's this user
