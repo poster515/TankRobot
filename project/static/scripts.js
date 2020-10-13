@@ -2,26 +2,18 @@
 // Execute when the DOM is fully loaded
 $(document).ready(function() {
 
-    // create button-specific callbacks for driving the tank
-    function leftmouseDown() {
-      alert("Left mousedown event!");
-    }
-
-    function leftmouseUp() {
-      alert("Left mouseup event!");
-    }
-    // $('a#test').bind('mousedown', function() {
-    //   $.getJSON('/background_process_test', function(data) { /* do nothing */});
-    //   return false;
-    // });
-    // $('a#test').bind('mouseup', function() {
-    //   $.getJSON('/background_process_test', function(data) { /* do nothing */});
-    //   return false;
-    // });
-    $('a#test').bind('click', function() {
-      $.getJSON('/background_process_test', function(data) { /* do nothing */});
+    $('a#test').bind('mousedown', function() {
+      $.getJSON('/left_start', function(data) { /* do nothing */});
       return false;
     });
+    $('a#test').bind('mouseup', function() {
+      $.getJSON('/left_stop', function(data) { /* do nothing */});
+      return false;
+    });
+    // $('a#test').bind('click', function() {
+    //   $.getJSON('/background_process_test', function(data) { /* do nothing */});
+    //   return false;
+    // });
     $('a#right').bind('mousedown', function() { $.get($SCRIPT_ROOT + '/_right'); });
     $('a#forward').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_forward', { forward: True }); });
     $('a#reverse').bind('mousedown', function() { $.getJSON($SCRIPT_ROOT + '/_reverse', { reverse: True }); });

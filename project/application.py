@@ -197,7 +197,7 @@ def background_process_test():
     print("Hello")
     return "nothing"
 
-@app.route('/_left_start')
+@app.route('/left_start')
 def left_start():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
@@ -207,7 +207,7 @@ def left_start():
     except:
         print("non-registered user has requested to start")
 
-@app.route('/_left_stop')
+@app.route('/left_stop')
 def left_stop():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
