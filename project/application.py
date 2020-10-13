@@ -32,7 +32,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 print("Started a new session")
-Session(app)
 
 # global double-ended queue for tank commands
 tank_cmd_queue = deque()
@@ -220,6 +219,8 @@ for code in default_exceptions:
 
 if __name__ == "__main__":
     print("Attempting to start app...")
+    sess = Session()
+    sess.init_app(app)
     app.run(debug=True)
 
     # finally, as part of setup, call drive_tank. this function
