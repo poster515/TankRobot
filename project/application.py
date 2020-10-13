@@ -78,6 +78,7 @@ def index():
             user_name = request.form['user_name']
             assert len(user_name) > 0
             session["user_name"] = user_name
+            session["IP_addr"] = request.remote_addr
             print("User {} at {} requested to sign up to drive...".format(user_name, request.remote_addr))
             print("Type of name and IP are {} and {}".format(type(user_name), type(request.remote_addr)))
         except (AssertionError, KeyError):
@@ -130,23 +131,26 @@ def drive():
     db_conn = create_connection(database)
 
     user_name = ""
+    IP_addr = ""
     try:
         user_name = session["user_name"]
-
+        IP_addr = session["IP_addr"]
+        print("User {} at IP {} has entered drive route".format(user_name, IP_addr))
     except KeyError:
         # user_name not found in the session, has NOT RIGHT to drive the Chrimbus Tank
         flash("You haven't signed up yet!")
-        return redirect(url_for("/"))
+        return redirect(url_for("index"))
 
-    # grab the bottommost entry, and grab the user name
-    next_user = db_conn.cursor().execute("SELECT user_name FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
+    # grab the bottommost entry, and grab the user name and their IP
+    (next_user, next_user_IP) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()[0]
 
     try:
         # make sure it's this user
         assert next_user == user_name
+        assert next_user_IP == IP_addr
         flash("Thanks {}! It's your turn to drive!".format(user_name))
         # don't forget to remove that user from the DB
-        db_conn.execute("DELETE FROM users WHERE user_name = ?", user_name)
+        db_conn.execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
         db_conn.commit()
         return render_template("drive.html", user=user_name)
 

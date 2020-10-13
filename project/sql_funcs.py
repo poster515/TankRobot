@@ -35,4 +35,5 @@ def create_table(conn, create_table_sql):
 def sql_table_func():
     return """ CREATE TABLE IF NOT EXISTS users (
                                         user_name TEXT NOT NULL,
-                                        ip_addr TEXT NOT NULL ); """
+                                        ip_addr TEXT NOT NULL,
+                                        eligible_start_time INTEGER NOT NULL); """
