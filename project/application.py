@@ -214,6 +214,7 @@ for code in default_exceptions:
 
 
 if __name__ == "__main__":
+    print("Attempting to start app...")
     app.run(debug=True)
 
     # finally, as part of setup, call drive_tank. this function
