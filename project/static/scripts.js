@@ -3,16 +3,16 @@
 $(document).ready(function() {
 
     // KNOWN GOOD
-    // document.getElementById("test").addEventListener("mousedown", function(){
-    //   $.getJSON('/background_process_test', function(data) { /* do nothing */});
-    //   return false;
-    // });
-
-    $('a#test').bind('mousedown', function(event) {
-      $.getJSON('/left_start', function(data) { /* do nothing */});
+    document.getElementById("test").addEventListener("mousedown", function(event){
+      $.getJSON('/background_process_test', function(data) { data.preventDefault(); });
       event.preventDefault();
       return false;
     });
+
+    // $('a#test').bind('mousedown', function(event) {
+    //   $.getJSON('/left_start', function(data) { /* do nothing */});
+    //   return false;
+    // });
 
     // $('a#test').bind('mouseup', function() {
     //   $.getJSON('/left_stop', function(data) { /* do nothing */});
