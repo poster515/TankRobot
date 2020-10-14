@@ -163,7 +163,8 @@ def drive_timeout():
         user_name = session["user_name"]
         IP_addr = session["IP_addr"]
         print("Deleting {} from IP {} from DB".format(user_name, IP_addr))
-        db_conn.execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+        db_conn = create_connection(database)
+        db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
         db_conn.commit()
     except KeyError:
         # user_name not found in the session
