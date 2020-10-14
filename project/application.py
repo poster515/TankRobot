@@ -350,7 +350,7 @@ if __name__ == "__main__":
     print("Attempting to start app...")
     # sess = Session()
     # sess.init_app(app)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
     # finally, as part of setup, call drive_tank. this function
     # constantly searches the tank_cmd_queue for commands, and then
