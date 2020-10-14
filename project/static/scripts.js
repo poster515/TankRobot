@@ -2,21 +2,6 @@
 // Execute when the DOM is fully loaded
 $(document).ready(function() {
 
-    // KNOWN GOOD
-    document.getElementById("test").addEventListener("mousedown", function(event){
-      $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
-      return false;
-    });
-    // need to prevent any default behavior from
-    document.getElementById("test").addEventListener("click", function(event){
-      event.preventDefault();
-      return false;
-    });
-    document.getElementById("test").addEventListener("mouseup", function(event){
-      $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
-      return false;
-    });
-
     // create bindings for each button on the "drive" page
     $('a#left').bind('mousedown', function() { $.getJSON('/left_start', function(data) { /* do nothing */}); return false; });
     $('a#left').bind('mouseup', function() { $.getJSON('/left_stop', function(data) { /* do nothing */}); return false; });

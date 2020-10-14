@@ -38,7 +38,11 @@
         if (distance <= 0) {
           clearInterval(x);
           document.getElementById("timer").innerHTML = "EXPIRED";
-          $.get('/drive_timeout', function(data) { /* do nothing */});
+          $.get('/drive_timeout', function(response) {
+            if (response.redirect) {
+              window.location.href = response.redirect;
+            }
+          });
         }
       }, 1000);
       </script>
@@ -46,10 +50,9 @@
       <div class='container'>
       <h3>Test</h3>
           <form>
-              <a href=# id=test><button class='btn btn-default'>Test</button></a>
               <a href=# id=left><button class="btn btn-default">Left</button></a>
               <a href=# id=right><button class="btn btn-default">Right</button></a>
-              <a href=# id=forard><button class="btn btn-default">Forward</button></a>
+              <a href=# id=forward><button class="btn btn-default">Forward</button></a>
               <a href=# id=reverse><button class="btn btn-default">Reverse</button></a>
               <a href=# id=shot><button class="btn btn-default"">Shot!</button></a>
           </form>

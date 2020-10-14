@@ -172,7 +172,7 @@ def drive_timeout():
         flash("You haven't signed up yet!")
     # clear session data
     session.clear()
-    return render_template("index.html", user_name=None)
+    return jsonify(dict(redirect='/'))
 
 @app.route("/wait")
 def wait():
@@ -199,12 +199,6 @@ def wait():
         return render_template("wait.html", user_name=user_name, num_users=num_users)
     else:
         return render_template("wait.html", user_name=None, num_users=len(user_names))
-
- # background process happening without any refreshing
-@app.route('/background_process_test')
-def background_process_test():
-    print("Hello")
-    return "nothing"
 
 @app.route('/left_start')
 def left_start():
@@ -273,7 +267,7 @@ def forward_stop():
     # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} stopped turning right".format(user_name))
+        print("User {} stopped going forward".format(user_name))
     except:
         print("non-registered user has requested to stop")
 
@@ -285,7 +279,7 @@ def reverse_start():
     # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} started going forward".format(user_name))
+        print("User {} started reversing".format(user_name))
     except:
         print("non-registered user has requested to start")
     # javascript requires a return statement
@@ -297,7 +291,7 @@ def reverse_stop():
     # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} stopped turning right".format(user_name))
+        print("User {} stopped turning reversing".format(user_name))
     except:
         print("non-registered user has requested to stop")
 
@@ -309,7 +303,7 @@ def shot_start():
     # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} started going forward".format(user_name))
+        print("User {} poured a shot!".format(user_name))
     except:
         print("non-registered user has requested to start")
     # javascript requires a return statement
