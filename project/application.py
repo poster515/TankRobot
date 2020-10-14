@@ -74,7 +74,7 @@ def create_app(DEV: bool = True):
             if len(exists) > 0:
                 # they have to wait
                 flash("Already added {} to queue! We'll let you know when it's your turn.".format(user_name))
-                return redirect(url_for("wait", user=user_name, IP_addr=request.remote_addr))
+                return redirect(url_for("wait"))
 
             # otherwise insert user and IP address into db
             db_conn.cursor().execute("INSERT INTO users VALUES (?, ?, null)", (user_name, request.remote_addr))
@@ -135,6 +135,26 @@ def create_app(DEV: bool = True):
             flash("It's not your turn to drive, {}!".format(user_name))
             return render_template("drive.html")
 
+    @app.route("/check_turn")
+    def check_turn():
+        try:
+            # try to remove that user from the DB
+            user_name = session["user_name"]
+            IP_addr = session["IP_addr"]
+            print("Checking if it's {} from IP {}'s turn".format(user_name, IP_addr))
+            db_conn = create_connection(database)
+            # first assert that we were actually the next user, just in case
+            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            if next_user == user_name:
+                print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
+                return True
+
+        except (KeyError, AssertionError):
+            pass
+        # if we're not next, or there's no session key, return false
+        return False
+
+
     @app.route("/drive_timeout")
     def drive_timeout():
 
@@ -168,18 +188,10 @@ def create_app(DEV: bool = True):
         db_conn = create_connection(database)
         user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
-        if user_name is not None:
-            # grab number of users ahead of this one
-            num_users = 0
-            for name in user_names:
-                 if name == user_name:
-                     break
-                 else:
-                     num_users += 1
-            # should already have a session cookie with this user name
-            return render_template("wait.html", user_name=user_name, num_users=num_users)
+        if len(user_name) > 0:
+            return render_template("wait.html", user_name=user_name, user_names=user_names)
         else:
-            return render_template("wait.html", user_name=None, num_users=len(user_names))
+            return render_template("wait.html", user_name=None, user_names=None)
 
     @app.route('/left_start')
     def left_start():
