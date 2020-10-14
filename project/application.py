@@ -202,10 +202,13 @@ def wait():
 
 @app.route('/left_start')
 def left_start():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} started turning left".format(user_name))
     except:
         print("non-registered user has requested to start")
@@ -214,10 +217,13 @@ def left_start():
 
 @app.route('/left_stop')
 def left_stop():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} stopped turning left".format(user_name))
     except:
         print("non-registered user has requested to stop")
@@ -226,10 +232,13 @@ def left_stop():
 
 @app.route('/right_start')
 def right_start():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} started turning right".format(user_name))
     except:
         print("non-registered user has requested to start")
@@ -238,10 +247,13 @@ def right_start():
 
 @app.route('/right_stop')
 def right_stop():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} stopped turning right".format(user_name))
     except:
         print("non-registered user has requested to stop")
@@ -251,10 +263,13 @@ def right_stop():
 
 @app.route('/forward_start')
 def forward_start():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} started going forward".format(user_name))
     except:
         print("non-registered user has requested to start")
@@ -263,10 +278,13 @@ def forward_start():
 
 @app.route('/forward_stop')
 def forward_stop():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} stopped going forward".format(user_name))
     except:
         print("non-registered user has requested to stop")
@@ -275,10 +293,13 @@ def forward_stop():
 
 @app.route('/reverse_start')
 def reverse_start():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} started reversing".format(user_name))
     except:
         print("non-registered user has requested to start")
@@ -287,10 +308,13 @@ def reverse_start():
 
 @app.route('/reverse_stop')
 def reverse_stop():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} stopped reversing".format(user_name))
     except:
         print("non-registered user has requested to stop")
@@ -299,10 +323,13 @@ def reverse_stop():
 
 @app.route('/shot_start')
 def shot_start():
-    # TODO make a separate DB table that contains the user actually driving.
-    # it seems like someone could call
+    db_conn = create_connection(database)
     try:
         user_name = session["user_name"]
+        IP_addr = session["IP_addr"]
+        (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+        assert user_name == next_user
+        assert next_user_IP == IP_addr
         print("User {} poured a shot!".format(user_name))
     except:
         print("non-registered user has requested to start")
