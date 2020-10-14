@@ -5,9 +5,17 @@ $(document).ready(function() {
     // KNOWN GOOD
     document.getElementById("test").addEventListener("mousedown", function(event){
       $.getJSON('/background_process_test', function(data) { data.preventDefault(); });
+      return false;
+    });
+    document.getElementById("test").addEventListener("click", function(event){
       event.preventDefault();
       return false;
     });
+    // document.getElementById("test").addEventListener("mouseup", function(event){
+    //   event.preventDefault();
+    //   return false;
+    // });
+
 
     // $('a#test').bind('mousedown', function(event) {
     //   $.getJSON('/left_start', function(data) { /* do nothing */});
