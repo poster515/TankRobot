@@ -7,11 +7,11 @@ $(document).ready(function() {
       $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
       return false;
     });
-    // // need to prevent any default behavior from
-    // document.getElementById("test").addEventListener("click", function(event){
-    //   event.preventDefault();
-    //   return false;
-    // });
+    // need to prevent any default behavior from
+    document.getElementById("test").addEventListener("click", function(event){
+      event.preventDefault();
+      return false;
+    });
     document.getElementById("test").addEventListener("mouseup", function(event){
       $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
       return false;
@@ -19,6 +19,10 @@ $(document).ready(function() {
 
     $('a#left_button').bind('mousedown', function() {
       $.getJSON('/left_start', function(data) { /* do nothing */});
+      return false;
+    });
+    $('a#left_button').bind('click', function(event) {
+      event.preventDefault();
       return false;
     });
     $('a#left_button').bind('mouseup', function() {
