@@ -25,7 +25,6 @@ def create_app(DEV: bool = True):
     # Generate secret key for application
     app.secret_key = os.urandom(24)
 
-    Session(app)
     session.clear()
 
     #
