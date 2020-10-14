@@ -291,7 +291,7 @@ def reverse_stop():
     # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} stopped turning reversing".format(user_name))
+        print("User {} stopped reversing".format(user_name))
     except:
         print("non-registered user has requested to stop")
 
