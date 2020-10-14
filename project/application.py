@@ -158,6 +158,7 @@ def drive():
 
 @app.route("/drive_timeout")
 def drive_timeout():
+
     try:
         # try to remove that user from the DB
         user_name = session["user_name"]
@@ -169,7 +170,9 @@ def drive_timeout():
     except KeyError:
         # user_name not found in the session
         flash("You haven't signed up yet!")
-    return redirect(url_for("index"))
+    # clear session data
+    session.clear()
+    return return render_template("index.html", user_name=None)
 
 @app.route("/wait")
 def wait():
@@ -227,30 +230,90 @@ def left_stop():
 
     return "Success"
 
-@app.route('/_right')
-def right():
+@app.route('/right_start')
+def left_start():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
     try:
         user_name = session["user_name"]
-        print("User {} steered right".format(user_name))
+        print("User {} started turning right".format(user_name))
     except:
-        print("non-registered user has requested to drive right")
+        print("non-registered user has requested to start")
+    # javascript requires a return statement
+    return "Success"
 
-    tank_cmd_queue.appendleft(right)
+@app.route('/right_stop')
+def left_stop():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} stopped turning right".format(user_name))
+    except:
+        print("non-registered user has requested to stop")
 
-@app.route('/_forward')
-def forward():
-    if request.args.get('forward', False, type=bool):
-        tank_cmd_queue.appendleft(forward)
+    return "Success"
 
-@app.route('/_reverse')
-def reverse():
-    if request.args.get('reverse', False, type=bool):
-        tank_cmd_queue.appendleft(reverse)
 
-@app.route('/_shot')
-def shot():
-    if request.args.get('shot', False, type=bool):
-        tank_cmd_queue.appendleft(shot)
+@app.route('/forward_start')
+def left_start():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} started going forward".format(user_name))
+    except:
+        print("non-registered user has requested to start")
+    # javascript requires a return statement
+    return "Success"
+
+@app.route('/forward_stop')
+def left_stop():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} stopped turning right".format(user_name))
+    except:
+        print("non-registered user has requested to stop")
+
+    return "Success"
+
+@app.route('/reverse_start')
+def left_start():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} started going forward".format(user_name))
+    except:
+        print("non-registered user has requested to start")
+    # javascript requires a return statement
+    return "Success"
+
+@app.route('/reverse_stop')
+def left_stop():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} stopped turning right".format(user_name))
+    except:
+        print("non-registered user has requested to stop")
+
+    return "Success"
+
+@app.route('/shot_start')
+def left_start():
+    # TODO make a separate DB table that contains the user actually driving.
+    # it seems like someone could call
+    try:
+        user_name = session["user_name"]
+        print("User {} started going forward".format(user_name))
+    except:
+        print("non-registered user has requested to start")
+    # javascript requires a return statement
+    return "Success"
 
 def errorhandler(e):
     """Handle error"""
