@@ -9,7 +9,7 @@ import string
 import os, sys
 
 # import sql db functions (file should be in same directory)
-from sql_funcs import create_connection, create_table, sql_table_func
+from project.sql_funcs import create_connection, create_table, sql_table_func
 
 def create_app(DEV: bool = True):
 
