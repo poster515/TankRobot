@@ -11,6 +11,16 @@ import os, sys
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
 
+# initialize new db connection and create the only table.
+# consist of [id][user_name][IP_address]
+database = "./tank_control.db"
+db_conn = create_connection(database)
+if db_conn:
+    create_table(db_conn, sql_table_func())
+else:
+    print("Error creating table, exiting program.")
+    sys.exit()
+
 def create_app(DEV: bool = True):
 
     # control debug print statements (Flask does a lot of this anyway)
@@ -29,16 +39,6 @@ def create_app(DEV: bool = True):
     # app.config["SESSION_FILE_DIR"] = mkdtemp()
     # app.config["SESSION_PERMANENT"] = False
     # app.config["SESSION_TYPE"] = "filesystem"
-
-    # initialize new db connection and create the only table.
-    # consist of [id][user_name][IP_address]
-    database = "./tank_control.db"
-    db_conn = create_connection(database)
-    if db_conn:
-        create_table(db_conn, sql_table_func())
-    else:
-        print("Error creating table, exiting program.")
-        sys.exit()
 
     # Ensure responses aren't cached
     @app.after_request
@@ -146,6 +146,8 @@ def create_app(DEV: bool = True):
             db_conn = create_connection(database)
             db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
             db_conn.commit()
+
+            #todo:
         except KeyError:
             # user_name not found in the session
             flash("You haven't signed up yet!")
