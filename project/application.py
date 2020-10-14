@@ -172,7 +172,7 @@ def drive_timeout():
         flash("You haven't signed up yet!")
     # clear session data
     session.clear()
-    return return render_template("index.html", user_name=None)
+    return render_template("index.html", user_name=None)
 
 @app.route("/wait")
 def wait():
