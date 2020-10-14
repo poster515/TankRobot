@@ -23,7 +23,8 @@ def create_app(DEV: bool = True):
     app = Flask(__name__)
 
     # Generate secret key for application
-    app.secret_key = os.urandom(24)
+    app.secret_key = "chrimbusrobottankcontrol"
+    # app.secret_key = os.urandom(24)
     #
     # app.config["SESSION_FILE_DIR"] = mkdtemp()
     # app.config["SESSION_PERMANENT"] = False
