@@ -30,9 +30,6 @@ app.secret_key = os.urandom(24)
 # app.config["SESSION_PERMANENT"] = False
 # app.config["SESSION_TYPE"] = "filesystem"
 
-# global double-ended queue for tank commands
-tank_cmd_queue = deque()
-
 # initialize new db connection and create the only table.
 # consist of [id][user_name][IP_address]
 # I think all we need is a relative db, don't really care about the absolute path
@@ -350,11 +347,7 @@ if __name__ == "__main__":
     print("Attempting to start app...")
     # sess = Session()
     # sess.init_app(app)
-    app.run(host='192.168.1.106', port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
 
-    # finally, as part of setup, call drive_tank. this function
-    # constantly searches the tank_cmd_queue for commands, and then
-    # executes them.
-    # drive_tank()
 else:
     print("Could not find entry point.")
