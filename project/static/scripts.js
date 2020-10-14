@@ -4,15 +4,16 @@ $(document).ready(function() {
 
     // KNOWN GOOD
     document.getElementById("test").addEventListener("mousedown", function(event){
-      $.getJSON('/background_process_test', function(data) { });
+      $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
       return false;
     });
-    document.getElementById("test").addEventListener("click", function(event){
-      event.preventDefault();
-      return false;
-    });
+    // // need to prevent any default behavior from
+    // document.getElementById("test").addEventListener("click", function(event){
+    //   event.preventDefault();
+    //   return false;
+    // });
     document.getElementById("test").addEventListener("mouseup", function(event){
-      $.getJSON('/background_process_test', function(data) {  });
+      $.getJSON('/background_process_test', function(data) { /* do nothing with any returned data */ });
       return false;
     });
     // document.getElementById("test").addEventListener("mouseup", function(event){
