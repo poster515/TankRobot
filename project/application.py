@@ -25,6 +25,9 @@ def create_app(DEV: bool = True):
     # Generate secret key for application
     app.secret_key = os.urandom(24)
 
+    Session(app)
+    session.clear()
+
     #
     # app.config["SESSION_FILE_DIR"] = mkdtemp()
     # app.config["SESSION_PERMANENT"] = False
