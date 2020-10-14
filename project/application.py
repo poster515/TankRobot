@@ -231,7 +231,7 @@ def left_stop():
     return "Success"
 
 @app.route('/right_start')
-def left_start():
+def right_start():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -243,7 +243,7 @@ def left_start():
     return "Success"
 
 @app.route('/right_stop')
-def left_stop():
+def right_stop():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -256,7 +256,7 @@ def left_stop():
 
 
 @app.route('/forward_start')
-def left_start():
+def forward_start():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -268,7 +268,7 @@ def left_start():
     return "Success"
 
 @app.route('/forward_stop')
-def left_stop():
+def forward_stop():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -280,7 +280,7 @@ def left_stop():
     return "Success"
 
 @app.route('/reverse_start')
-def left_start():
+def reverse_start():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -292,7 +292,7 @@ def left_start():
     return "Success"
 
 @app.route('/reverse_stop')
-def left_stop():
+def reverse_stop():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
@@ -304,7 +304,7 @@ def left_stop():
     return "Success"
 
 @app.route('/shot_start')
-def left_start():
+def shot_start():
     # TODO make a separate DB table that contains the user actually driving.
     # it seems like someone could call
     try:
