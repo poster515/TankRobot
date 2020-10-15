@@ -259,7 +259,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started turning left".format(user_name))
@@ -274,7 +274,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} stopped turning left".format(user_name))
@@ -289,7 +289,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started turning right".format(user_name))
@@ -304,7 +304,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} stopped turning right".format(user_name))
@@ -320,7 +320,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started going forward".format(user_name))
@@ -335,7 +335,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} stopped going forward".format(user_name))
@@ -350,7 +350,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started reversing".format(user_name))
@@ -365,7 +365,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} stopped reversing".format(user_name))
@@ -380,7 +380,7 @@ def create_app(DEV: bool = True):
         try:
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} poured a shot!".format(user_name))
