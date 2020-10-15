@@ -30,10 +30,12 @@ nav .navbar-brand .green
   width: auto;
   height: inherit;
 }
-#drive_header {
+
+.drive_header {
   background-color: #ffffff;
   width: auto;
   height: auto;
+  font-weight: bold;
 }
 
 #q
@@ -81,7 +83,7 @@ th {
 }
 td {
     /*display: table-cell;*/
-    text-align: left;
+    text-align: center;
     font-weight: bold;
 }
 
