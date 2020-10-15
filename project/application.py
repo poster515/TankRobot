@@ -172,6 +172,7 @@ def create_app(DEV: bool = True):
                         return render_template(url_for("index"))
                     print("User {} at {} should already be driving!!".format(user_name, IP_addr))
                 else: # update their status to "driving"
+                    print("current time is {}".format(int(time.time())))
                     seconds_remaining = int(time.time()) + drive_timeout
                     print("seconds remaining for user {} is {}".format(user_name, seconds_remaining))
                     db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (seconds_remaining, ))
