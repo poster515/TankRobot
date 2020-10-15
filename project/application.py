@@ -38,7 +38,7 @@ def create_app(DEV: bool = True):
     # app.secret_key = os.urandom(24)
     #
     # app.config["SESSION_FILE_DIR"] = mkdtemp()
-    # app.config["SESSION_PERMANENT"] = False
+    app.config["SESSION_PERMANENT"] = False
     # app.config["SESSION_TYPE"] = "filesystem"
 
     wait_timeout = 2 * 60.0 # i.e., you have five minutes to start driving otherwise you get kicked out
