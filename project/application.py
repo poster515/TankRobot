@@ -172,9 +172,9 @@ def create_app(DEV: bool = True):
                     return render_template(url_for("index"))
                 print("User {} at {} should already be driving!!".format(user_name, IP_addr))
             else: # update their status to "driving"
-                print("User {} at {} can now drive!!".format(user_name, IP_addr))
                 db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + drive_timeout))
                 db_conn.commit()
+                print("User {} at {} can now drive!!".format(user_name, IP_addr))
             return render_template("drive.html", user=user_name)
 
         except (AssertionError, TypeError):
