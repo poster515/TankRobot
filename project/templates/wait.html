@@ -16,6 +16,10 @@
                   <td>{{ user }}</td>
               </tr>
               {% endfor %}
+            {% else %}
+            <tr>
+                <td>No users are waiting! Go sign up ya dingus!</td>
+            </tr>
             {% endif %}
           </tbody>
       </table>
@@ -28,7 +32,13 @@
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = False;
-            $.getJSON('/check_turn', function(is_it_my_turn) { my_turn = is_it_my_turn; });
+            $.getJSON('/check_turn', function(data) {
+                if (data.redirect) {
+                  window.location.href = data.redirect;
+                } else {
+                  my_turn = data.is_it_my_turn;
+                }
+            });
 
             if (my_turn == True) {
                 document.getElementById('drive_button').style.visibility="visible";

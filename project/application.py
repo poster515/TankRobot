@@ -91,7 +91,7 @@ def create_app(DEV: bool = True):
 
             # grab the user with the lowest id number
             (next_user, _, can_drive, _, can_drive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            while (can_drive == "True") and (can_drive_endtime >= time.time()):
+            while (can_drive == "True") and (can_drive_endtime < time.time()):
                 # then this user has waited too long. YEET
                 print("user {} has waited too long to start driving. SAD!".format(next_user))
                 db_conn.cursor().execute("DELETE FROM users WHERE rowid = (SELECT min(rowid) FROM users);", (user_name, IP_addr))
@@ -155,20 +155,26 @@ def create_app(DEV: bool = True):
             return redirect(url_for("index"))
 
         try:
-            (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, can_drive, is_driving, candrive_endtime, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             # make sure it's this user
             assert next_user == user_name
             assert next_user_IP == IP_addr
             print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
             try:
-                if is_driving == 'True': # if already driving, check if they've outstayed their driving welcome
-                    if drive_endtime < time.time():
-                        print("user must have come back to this page, and their turn is over. YEET")
-                        db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
-                        db_conn.commit()
-                        session.clear()
-                        return render_template(url_for("index"))
-                    print("User {} at {} should already be driving!!".format(user_name, IP_addr))
+                if can_drive == 'True' and candrive_endtime < time.time():
+                    # they've waited too long. YEET
+                    print("User {} at {} waited too long to start driving!".format(next_user, next_user_IP))
+                    db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+                    db_conn.commit()
+                    session.clear()
+                    return redirect(url_for("index"))
+                elif is_driving == 'True' and drive_endtime < time.time():
+                    # if already driving, check if they've outstayed their driving welcome
+                    print("user must have come back to this page, and their turn is over. YEET")
+                    db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+                    db_conn.commit()
+                    session.clear()
+                    return redirect(url_for("index"))
                 else: # update their status to "driving"
                     print("current time is {}".format(int(time.time())))
                     end_time = int(time.time()) + drive_timeout
@@ -183,10 +189,11 @@ def create_app(DEV: bool = True):
 
         except (AssertionError, TypeError):
             print("Directing user to wait, it's not their dang turn!!")
-            return render_template("wait.html")
+            return redirect(url_for("wait"))
 
     @app.route("/check_turn")
     def check_turn():
+        wait_timeout = 2 * 60
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -194,15 +201,32 @@ def create_app(DEV: bool = True):
             print("Checking if it's {} from IP {}'s turn".format(user_name, IP_addr))
             db_conn = create_connection(database)
             # first assert that we were actually the next user, just in case
-            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            if next_user == user_name:
-                print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
-                return True
+            (next_user, next_user_IP, can_drive, _, candrive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            if can_drive == "True" and candrive_endtime >= time.time():
+                if next_user == user_name:
+                    print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
+                    return jsonify(is_it_my_turn = True)
+            elif can_drive == "True" and candrive_endtime < time.time():
+                print("user waited too long on Wait page, and their turn is over. YEET")
+                db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+                db_conn.commit()
+                session.clear()
+                # try to grab next eligible user and set their ability to drive
+                try:
+                    (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+                    # finally, update the time by which the next user must start driving for the next user
+                    db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+                    db_conn.commit()
+                    print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+                except:
+                    # there is no next user.
+                    pass
+                return jsonify(dict(redirect='/'))
 
         except (KeyError, AssertionError):
             pass
         # if we're not next, or there's no session key, return false
-        return False
+        return jsonify(is_it_my_turn = False)
 
 
     @app.route("/drive_timeout")
