@@ -42,7 +42,7 @@ def create_app(DEV: bool = True):
     # app.config["SESSION_TYPE"] = "filesystem"
 
     wait_timeout = 2 * 60.0 # i.e., you have five minutes to start driving otherwise you get kicked out
-    drive_timeout = 1 * 60.0
+
     # Ensure responses aren't cached
     @app.after_request
     def after_request(response):
@@ -145,7 +145,7 @@ def create_app(DEV: bool = True):
     @app.route("/drive", methods = ["GET"])
     def drive():
         db_conn = create_connection(database)
-
+        drive_timeout = 1 * 60.0    # i.e., one minute of drive time
         user_name = ""
         IP_addr = ""
         try:
@@ -164,7 +164,7 @@ def create_app(DEV: bool = True):
             print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
             try:
                 if is_driving == 'True': # if already driving, check if they've outstayed their driving welcome
-                    if drive_endtime > (time.time() + drive_timeout):
+                    if drive_endtime < time.time():
                         print("user must have come back to this page, and their turn is over. YEET")
                         db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
                         db_conn.commit()
@@ -173,11 +173,11 @@ def create_app(DEV: bool = True):
                     print("User {} at {} should already be driving!!".format(user_name, IP_addr))
                 else: # update their status to "driving"
                     print("current time is {}".format(int(time.time())))
-                    seconds_remaining = int(time.time()) + drive_timeout
-                    print("seconds remaining for user {} is {}".format(user_name, seconds_remaining))
-                    db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (seconds_remaining, ))
+                    end_time = int(time.time()) + drive_timeout
+                    print("seconds remaining for user {} is {}".format(user_name, end_time))
+                    db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (end_time, ))
                     db_conn.commit()
-                    print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, int(time.time()) - seconds_remaining))
+                    print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, end_time - int(time.time())))
                 return render_template("drive.html", user=user_name)
             except:
                 print("'is_driving': {}, and type is {}".format(is_driving, type(is_driving)))
