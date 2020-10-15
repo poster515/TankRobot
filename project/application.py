@@ -156,10 +156,8 @@ def create_app(DEV: bool = True):
             # user_name not found in the session, has NO RIGHT to drive the Chrimbus Tank
             return redirect(url_for("index"))
 
-        # grab the bottommost entry, and grab the user name and their IP
-        (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-
         try:
+            (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             # make sure it's this user
             assert next_user == user_name
             assert next_user_IP == IP_addr
@@ -179,9 +177,8 @@ def create_app(DEV: bool = True):
                 db_conn.commit()
             return render_template("drive.html", user=user_name)
 
-        except AssertionError:
-            flash("It's not your turn to drive, {}!".format(user_name))
-            print("Directing user {} at {} to wait, it's not their dang turn!!".format(user_name, IP_addr))
+        except (AssertionError, TypeError):
+            print("Directing user to wait, it's not their dang turn!!")
             return render_template("wait.html")
 
     @app.route("/check_turn")
