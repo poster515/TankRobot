@@ -36,4 +36,7 @@ def sql_table_func():
     return """ CREATE TABLE IF NOT EXISTS users (
                                         user_name TEXT NOT NULL,
                                         ip_addr TEXT NOT NULL,
-                                        eligible_start_time INTEGER); """
+                                        can_drive TEXT NOT NULL DEFAULT "False",
+                                        is_driving TEXT NOT NULL DEFAULT "False",
+                                        can_drive_endtime INTEGER,
+                                        drive_endtime INTEGER); """

@@ -10,11 +10,13 @@
       <!-- show list of all users currently waiting -->
       <table width="500" align="left">
           <tbody>
+            {% if user_names %}
               {% for user in user_names %}
               <tr>
                   <td>{{ user }}</td>
               </tr>
               {% endfor %}
+            {% endif %}
           </tbody>
       </table>
 
