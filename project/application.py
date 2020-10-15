@@ -162,22 +162,24 @@ def create_app(DEV: bool = True):
             assert next_user == user_name
             assert next_user_IP == IP_addr
             print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
-
-            if is_driving == "True": # if already driving, check if they've outstayed their driving welcome
-                if drive_endtime > (time.time() + drive_timeout):
-                    print("user must have come back to this page, and their turn is over. YEET")
-                    db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+            try:
+                if is_driving == "True": # if already driving, check if they've outstayed their driving welcome
+                    if drive_endtime > (time.time() + drive_timeout):
+                        print("user must have come back to this page, and their turn is over. YEET")
+                        db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+                        db_conn.commit()
+                        session.clear()
+                        return render_template(url_for("index"))
+                    print("User {} at {} should already be driving!!".format(user_name, IP_addr))
+                else: # update their status to "driving"
+                    seconds_remaining = int(time.time()) + drive_timeout
+                    print("seconds remaining for user {} is {}".format(user_name, seconds_remaining))
+                    db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (seconds_remaining, ))
                     db_conn.commit()
-                    session.clear()
-                    return render_template(url_for("index"))
-                print("User {} at {} should already be driving!!".format(user_name, IP_addr))
-            else: # update their status to "driving"
-                seconds_remaining = int(time.time()) + drive_timeout
-                print("seconds remaining for user {} is {}".format(user_name, seconds_remaining))
-                db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (seconds_remaining, ))
-                db_conn.commit()
-                print("User {} at {} can now drive!!".format(user_name, IP_addr))
-            return render_template("drive.html", user=user_name)
+                    print("User {} at {} can now drive!!".format(user_name, IP_addr))
+                return render_template("drive.html", user=user_name)
+            except:
+                print(is_driving)
 
         except (AssertionError, TypeError):
             print("Directing user to wait, it's not their dang turn!!")
