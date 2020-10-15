@@ -52,6 +52,16 @@ def create_app(DEV: bool = True):
     def index():
         """Show Home Page"""
         if request.method == "POST":
+            try:
+                # first make sure that the user in this browser/at this IP address
+                # isn't trying to register again.
+                user_name = session["user_name"]
+                IP_addr = session["IP_addr"]
+                print("User {} at {} attempted to register again.".format(user_name, IP_addr))
+                flash("You can't register again! Wait your turn ya dingus!")
+                return
+            except:
+                pass
             # try to to grab user info from form and post it to DB
             try:
                 user_name = request.form['user_name']
