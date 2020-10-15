@@ -179,7 +179,8 @@ def create_app(DEV: bool = True):
                     print("User {} at {} can now drive!!".format(user_name, IP_addr))
                 return render_template("drive.html", user=user_name)
             except:
-                print(is_driving)
+                print(type(is_driving))
+                return render_template("drive.html", user=user_name)
 
         except (AssertionError, TypeError):
             print("Directing user to wait, it's not their dang turn!!")
