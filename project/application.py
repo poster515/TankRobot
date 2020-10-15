@@ -132,7 +132,7 @@ def create_app(DEV: bool = True):
             IP_addr = session["IP_addr"]
             assert next_user == user_name
             assert next_user_IP == IP_addr
-            print("time_left: It is user {} at {}'s turn!!".format(user_name, IP_addr))
+            print("time_left: {}".format(drive_endtime))
             if is_driving == "True":
                 return { "seconds_left": drive_endtime - int(time.time()) }
             else:
@@ -163,7 +163,7 @@ def create_app(DEV: bool = True):
             assert next_user_IP == IP_addr
             print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
             try:
-                if is_driving == "True": # if already driving, check if they've outstayed their driving welcome
+                if is_driving == 'True': # if already driving, check if they've outstayed their driving welcome
                     if drive_endtime > (time.time() + drive_timeout):
                         print("user must have come back to this page, and their turn is over. YEET")
                         db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
@@ -176,10 +176,10 @@ def create_app(DEV: bool = True):
                     print("seconds remaining for user {} is {}".format(user_name, seconds_remaining))
                     db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (seconds_remaining, ))
                     db_conn.commit()
-                    print("User {} at {} can now drive!!".format(user_name, IP_addr))
+                    print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, int(time.time()) - seconds_remaining))
                 return render_template("drive.html", user=user_name)
             except:
-                print(type(is_driving))
+                print("'is_driving': {}, and type is {}".format(is_driving, type(is_driving)))
                 return render_template("drive.html", user=user_name)
 
         except (AssertionError, TypeError):
