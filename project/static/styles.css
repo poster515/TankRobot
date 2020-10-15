@@ -27,10 +27,13 @@ nav .navbar-brand .green
   color: #2e944b;
 }
 #timer {
-  width: 20px;
+  width: auto;
+  height: inherit;
 }
 #drive_header {
   background-color: #ffffff;
+  width: auto;
+  height: auto;
 }
 
 #q
