@@ -87,7 +87,7 @@ def create_app(DEV: bool = True):
                 return redirect(url_for("wait"))
 
             # otherwise insert user and IP address into db
-            db_conn.cursor().execute("INSERT INTO users VALUES (?, ?)", (user_name, request.remote_addr))
+            db_conn.cursor().execute("INSERT INTO users VALUES (?, ?, 'False', 'False', 0, 0)", (user_name, request.remote_addr))
             db_conn.commit()
 
             # grab the user with the lowest id number
