@@ -131,19 +131,19 @@ def create_app(DEV: bool = True):
             return redirect(url_for("index"))
 
         # grab the bottommost entry, and grab the user name and their IP
-        print("SQL output: {}".format(db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()))
         (next_user, next_user_IP, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
 
         try:
             # make sure it's this user
             assert next_user == user_name
             assert next_user_IP == IP_addr
-            flash("Thanks {}! It's your turn to drive!".format(user_name))
+            print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
             return render_template("drive.html", user=user_name)
 
         except AssertionError:
             flash("It's not your turn to drive, {}!".format(user_name))
-            return render_template("drive.html")
+            print("Directing user {} at {} to wait, it's not their dang turn!!".format(user_name, IP_addr))
+            return render_template("wait.html")
 
     @app.route("/check_turn")
     def check_turn():
