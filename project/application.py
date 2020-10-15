@@ -92,7 +92,7 @@ def create_app(DEV: bool = True):
 
             # grab the user with the lowest id number
             (next_user, _, can_drive, _, can_drive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            whlie (can_drive == "True") and (can_drive_endtime >= (time.time() + wait_timeout)):
+            while (can_drive == "True") and (can_drive_endtime >= (time.time() + wait_timeout)):
                 # then this user has waited too long. YEET
                 print("user {} has waited too long to start driving. SAD!".format(next_user))
                 db_conn.cursor().execute("DELETE FROM users WHERE rowid = (SELECT min(rowid) FROM users);", (user_name, IP_addr))
