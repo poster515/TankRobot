@@ -59,7 +59,7 @@ def create_app(DEV: bool = True):
                 IP_addr = session["IP_addr"]
                 print("User {} at {} attempted to register again.".format(user_name, IP_addr))
                 flash("You can't register again! Wait your turn ya dingus!")
-                return
+                return False
             except:
                 pass
             # try to to grab user info from form and post it to DB
@@ -198,7 +198,7 @@ def create_app(DEV: bool = True):
         db_conn = create_connection(database)
         user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
-        if len(user_name) > 0:
+        if len(user_names) > 0:
             return render_template("wait.html", user_name=user_name, user_names=user_names)
         else:
             return render_template("wait.html", user_name=None, user_names=None)

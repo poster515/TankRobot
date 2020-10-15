@@ -21,15 +21,15 @@
       <a id=drive_button href="/drive">GO DRIVE: </a>
 
       <script>
-        $('a#drive_button').style.visibility="hidden";
-        $('a#drive_button').style.backgroundColor = "red";
+        document.getElementById('drive_button').style.visibility="hidden";
+        document.getElementById('drive_button').style.backgroundColor = "red";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = False;
             $.getJSON('/check_turn', function(is_it_my_turn) { my_turn = is_it_my_turn; });
 
             if (my_turn == True) {
-                $('a#drive_button').style.visibility="visible";
+                document.getElementById('drive_button').style.visibility="visible";
                 clearInterval(x);
                 // once we know it's our turn to drive, give the user two minutes to
                 // navigate to the Drive page.
