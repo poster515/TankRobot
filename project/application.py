@@ -41,8 +41,6 @@ def create_app(DEV: bool = True):
     app.config["SESSION_PERMANENT"] = False
     # app.config["SESSION_TYPE"] = "filesystem"
 
-    wait_timeout = 2 * 60.0 # i.e., you have five minutes to start driving otherwise you get kicked out
-
     # Ensure responses aren't cached
     @app.after_request
     def after_request(response):
@@ -132,7 +130,7 @@ def create_app(DEV: bool = True):
             IP_addr = session["IP_addr"]
             assert next_user == user_name
             assert next_user_IP == IP_addr
-            print("time_left: {}".format(drive_endtime))
+            print("end time (in seconds from epoch): {}".format(drive_endtime))
             if is_driving == "True":
                 return jsonify(end_time = drive_endtime)
             else:
@@ -209,7 +207,7 @@ def create_app(DEV: bool = True):
 
     @app.route("/drive_timeout")
     def drive_timeout():
-
+        wait_timeout = 2 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -220,11 +218,16 @@ def create_app(DEV: bool = True):
             db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
             db_conn.commit()
 
-            # finally, update the time by which the next user must start driving for the next user
-            db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + (2 * 60)))
-            db_conn.commit()
-            (next_user, next_user_IP, _, _, can_drive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+            try:
+                (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+                # finally, update the time by which the next user must start driving for the next user
+                db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+                db_conn.commit()
+                print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+            except:
+                # there is no next user.
+                pass
+
         except KeyError:
             # user_name not found in the session
             flash("You haven't signed up yet!")
