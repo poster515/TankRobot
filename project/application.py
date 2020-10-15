@@ -134,9 +134,9 @@ def create_app(DEV: bool = True):
             assert next_user_IP == IP_addr
             print("time_left: {}".format(drive_endtime))
             if is_driving == "True":
-                return { "seconds_left": drive_endtime - int(time.time()) }
+                return jsonify(end_time = drive_endtime)
             else:
-                return { "seconds_left": drive_timeout }
+                return jsonify(end_time = drive_timeout)
         except:
             print("Not sure how someone got to this route...")
             return "nothing"
