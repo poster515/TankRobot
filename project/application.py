@@ -52,6 +52,7 @@ def create_app(DEV: bool = True):
     @app.route("/", methods = ["GET", "POST"])
     def index():
         """Show Home Page"""
+        wait_timeout = 2 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         if request.method == "POST":
             try:
                 # first make sure that the user in this browser/at this IP address
@@ -90,7 +91,7 @@ def create_app(DEV: bool = True):
 
             # grab the user with the lowest id number
             (next_user, _, can_drive, _, can_drive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            while (can_drive == "True") and (can_drive_endtime >= (time.time() + wait_timeout)):
+            while (can_drive == "True") and (can_drive_endtime >= time.time()):
                 # then this user has waited too long. YEET
                 print("user {} has waited too long to start driving. SAD!".format(next_user))
                 db_conn.cursor().execute("DELETE FROM users WHERE rowid = (SELECT min(rowid) FROM users);", (user_name, IP_addr))
@@ -130,7 +131,6 @@ def create_app(DEV: bool = True):
             IP_addr = session["IP_addr"]
             assert next_user == user_name
             assert next_user_IP == IP_addr
-            print("end time (in seconds from epoch): {}".format(drive_endtime))
             if is_driving == "True":
                 return jsonify(end_time = drive_endtime)
             else:
@@ -173,7 +173,7 @@ def create_app(DEV: bool = True):
                     print("current time is {}".format(int(time.time())))
                     end_time = int(time.time()) + drive_timeout
                     print("seconds remaining for user {} is {}".format(user_name, end_time))
-                    db_conn.cursor().execute("UPDATE users SET is_driving = 'True', drive_endtime = ? WHERE rowid = (SELECT min(rowid) FROM users);", (end_time, ))
+                    db_conn.cursor().execute("UPDATE users SET can_drive='False', is_driving='True', drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (end_time, ))
                     db_conn.commit()
                     print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, end_time - int(time.time())))
                 return render_template("drive.html", user=user_name)
