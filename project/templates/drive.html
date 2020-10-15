@@ -9,8 +9,17 @@
       {% if user_name %}
           <div><h3>Welcome {{ user_name }}!</h3></div>
       {% endif %}
-<!-- Display the countdown timer in an element -->
-      <p id="timer" style="background-color: #ffffff;"></p>
+
+      <div class='container'>
+      <h3>Control Panel: </h3><a id="timer" class="drive_timer"></a>
+          <form>
+              <a href=# id=left><button class="btn btn-default">Left</button></a>
+              <a href=# id=right><button class="btn btn-default">Right</button></a>
+              <a href=# id=forward><button class="btn btn-default">Forward</button></a>
+              <a href=# id=reverse><button class="btn btn-default">Reverse</button></a>
+              <a href=# id=shot><button class="btn btn-default"">Shot!</button></a>
+          </form>
+      </div>
 
       <script>
       // Update the count down every 1 second
@@ -40,17 +49,5 @@
           }); // getJSON
       }, 1000);
       </script>
-
-      <div class='container'>
-      <h3>Control Panel</h3>
-          <form>
-              <a href=# id=left><button class="btn btn-default">Left</button></a>
-              <a href=# id=right><button class="btn btn-default">Right</button></a>
-              <a href=# id=forward><button class="btn btn-default">Forward</button></a>
-              <a href=# id=reverse><button class="btn btn-default">Reverse</button></a>
-              <a href=# id=shot><button class="btn btn-default"">Shot!</button></a>
-          </form>
-
-      </div>
 
 {% endblock %}
