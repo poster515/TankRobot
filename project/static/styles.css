@@ -73,11 +73,16 @@ th {
 td {
     /*display: table-cell;*/
     text-align: left;
+    font-weight: bold;
 }
 
 tr:nth-child(even) {
-    background-color: #D3D3D3;
+    background-color: #32a844;
 }
+tr:nth-child(odd) {
+    background-color: #8132a8;
+}
+
 
 .display:table {
     padding-left: 50px;

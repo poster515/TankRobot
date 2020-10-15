@@ -10,7 +10,7 @@
           <div><h3>Welcome {{ user_name }}!</h3></div>
       {% endif %}
 <!-- Display the countdown timer in an element -->
-      <p id="timer"></p>
+      <p id="timer" style="background-color: #ffffff;"></p>
 
       <script>
       // Update the count down every 1 second
@@ -19,7 +19,7 @@
         $.getJSON('/time_left', function(data) {
 
           end_time = data.end_time; // unix epoch time, in seconds, that ends our turn
-          var distance = end_time - (Date.now()/1000); // Date units are ms not s
+          var distance = end_time - (Date.now()/1000); // Date.now() units are ms not s
           // Time calculations for minutes and seconds
           var minutes = Math.floor((distance % (60 * 60)) / 60);
           var seconds = Math.floor(distance % 60);

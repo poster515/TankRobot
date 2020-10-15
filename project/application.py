@@ -144,6 +144,7 @@ def create_app(DEV: bool = True):
     def drive():
         db_conn = create_connection(database)
         drive_timeout = 1 * 60.0    # i.e., one minute of drive time
+
         user_name = ""
         IP_addr = ""
         try:
@@ -175,6 +176,11 @@ def create_app(DEV: bool = True):
                     db_conn.commit()
                     session.clear()
                     return redirect(url_for("index"))
+
+                elif is_driving == 'True' and drive_endtime >= time.time():
+                    # no need to update DB here, user should already be driving.
+                    print("User {} at {} should be driving with {} s left!!".format(user_name, IP_addr, drive_endtime - int(time.time())))
+
                 else: # update their status to "driving"
                     print("current time is {}".format(int(time.time())))
                     end_time = int(time.time()) + drive_timeout
@@ -273,7 +279,8 @@ def create_app(DEV: bool = True):
         user_names = db_conn.cursor().execute("SELECT user_name FROM users").fetchall()
 
         if len(user_names) > 0:
-            return render_template("wait.html", user_name=user_name, user_names=user_names)
+            names = [user_name[0] for user_name in user_names] # each entry is actually "('name',)"
+            return render_template("wait.html", user_name=user_name, user_names=names)
         else:
             return render_template("wait.html", user_name=None, user_names=None)
 
