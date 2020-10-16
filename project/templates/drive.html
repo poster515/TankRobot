@@ -26,26 +26,29 @@
       var x = setInterval(function() {
 
         $.getJSON('/time_left', function(data) {
+          if data.redirect) {
+              window.location.href = data.redirect;
+          } else {
+              end_time = data.end_time; // unix epoch time, in seconds, that ends our turn
+              var distance = end_time - (Date.now()/1000); // Date.now() units are ms not s
+              // Time calculations for minutes and seconds
+              var minutes = Math.floor((distance % (60 * 60)) / 60);
+              var seconds = Math.floor(distance % 60);
 
-          end_time = data.end_time; // unix epoch time, in seconds, that ends our turn
-          var distance = end_time - (Date.now()/1000); // Date.now() units are ms not s
-          // Time calculations for minutes and seconds
-          var minutes = Math.floor((distance % (60 * 60)) / 60);
-          var seconds = Math.floor(distance % 60);
+              // Display the result in the element with id="demo"
+              document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
 
-          // Display the result in the element with id="demo"
-          document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
-
-            // If the count down is finished, write some text
-            if (distance <= 0) {
-              clearInterval(x);
-              document.getElementById("timer").innerHTML = "EXPIRED";
-              $.get('/drive_timeout', function(response) {
-                if (response.redirect) {
-                  window.location.href = response.redirect;
-                }
-              }); // get
-            } // if distance
+                // If the count down is finished, write some text
+                if (distance <= 0) {
+                  clearInterval(x);
+                  document.getElementById("timer").innerHTML = "EXPIRED";
+                  $.get('/drive_timeout', function(response) {
+                    if (response.redirect) {
+                      window.location.href = response.redirect;
+                    }
+                  }); // get
+                } // if distance
+            } // if redirect
           }); // getJSON
       }, 1000);
       </script>

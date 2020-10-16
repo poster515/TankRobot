@@ -163,7 +163,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
                 return jsonify(end_time = drive_timeout)
         except:
             print("Not sure how someone got to this route...")
-            return "nothing"
+            session.clear()
+            return jsonify(dict(redirect='/'))
 
 
     @app.route("/drive", methods = ["GET"])
