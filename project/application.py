@@ -150,9 +150,10 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
             available for the driver to maintain control.
         """
         db_conn = create_connection(database)
-        (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+
         try:
             # make sure it's this user
+            (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             user_name = session["user_name"]
             IP_addr = session["IP_addr"]
             assert next_user == user_name
