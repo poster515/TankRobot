@@ -43,11 +43,11 @@
                       document.getElementById('drive_button').style.visibility="visible";
                       // once we know it's our turn to drive, give the user two minutes to
                       // navigate to the Drive page.
-                      end_time = data.end_time;
+                      end_time = data.end_time; // seconds until wait_time is up
 
                       var y = setInterval(function() {
                         // Find the distance between now and the count down date
-                        var distance = end_time - Date.now()/1000;
+                        var distance = end_time*1000 - Date.now(); //Date.now() is in "ms" not "s"
 
                         // Time calculations for minutes and seconds
                         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
