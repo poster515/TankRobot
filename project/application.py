@@ -245,8 +245,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             if can_drive == "True" and candrive_endtime >= time.time() and next_user == user_name:
                 print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
                 return jsonify(is_it_my_turn = "True")
-            elif (can_drive == "True" and candrive_endtime < time.time()) or (is_driving == "True" and drive_endtime < time.time()):
-                print("user waited or took too long too drive, and their turn is over. YEET")
+            elif (can_drive == "True" and candrive_endtime < time.time()):
+                print("user {} waited or took too long too drive, and their turn is over. YEET".format(user_name))
                 db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
                 db_conn.commit()
                 session.clear()
