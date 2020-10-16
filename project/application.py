@@ -233,6 +233,13 @@ def create_app(DEV: bool = True):
             print("Checking if it's {} from IP {}'s turn".format(user_name, IP_addr))
             db_conn = create_connection(database)
             # first assert that we were actually the next user, just in case
+            try:
+                # first, make sure user even exists
+                db_conn.cursor().execute("SELECT * FROM users WHERE user_name=? AND ip_addr=?", (user_name, IP_addr)).fetchone()[0]
+            except:
+                # this user doesn't even exist in our database...
+                session.clear()
+                return jsonify(dict(redirect='/'))
             (next_user, next_user_IP, can_drive, _, candrive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             if can_drive == "True" and candrive_endtime >= time.time():
                 if next_user == user_name:
