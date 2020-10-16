@@ -23,7 +23,7 @@ else:
     print("Error creating table, exiting program.")
     sys.exit()
 
-def create_app(DEV: bool = True):
+def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
 
     # control debug print statements (Flask does a lot of this anyway)
     DEBUG = True
@@ -74,7 +74,7 @@ def create_app(DEV: bool = True):
     @app.route("/", methods = ["GET", "POST"])
     def index():
         """Show Home Page"""
-        wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
+        # wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         if request.method == "POST":
             try:
                 # first make sure that the user in this browser/at this IP address
@@ -169,7 +169,7 @@ def create_app(DEV: bool = True):
     @app.route("/drive", methods = ["GET"])
     def drive():
         db_conn = create_connection(database)
-        drive_timeout = 1 * 60.0    # i.e., one minute of drive time
+        # drive_timeout = 1 * 60.0    # i.e., one minute of drive time
 
         user_name = ""
         IP_addr = ""
@@ -225,7 +225,7 @@ def create_app(DEV: bool = True):
 
     @app.route("/check_turn")
     def check_turn():
-        wait_timeout = 1 * 60
+        # wait_timeout = 1 * 60
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -270,7 +270,7 @@ def create_app(DEV: bool = True):
 
     @app.route("/drive_timeout")
     def drive_timeout():
-        wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
+        # wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
