@@ -23,17 +23,14 @@
             {% endif %}
           </tbody>
       </table>
-      <!-- <form>
-        <!-- <a href="/drive"><button class="btn btn-default"></button></a> -->
-        <!-- <a href="/drive" id=drive_button><button class="btn btn-default"></button></a>
-      </form> --> -->
+
       <form action="/drive" method="get">
           <button id=drive_button class="btn btn-primary" type="submit"></button>
       </form>
       <script>
         document.getElementById('drive_button').style.visibility="hidden";
 
-        document.getElementById('drive_button').style.backgroundColor = "red";
+        // document.getElementById('drive_button').style.backgroundColor = "red";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = "False";
