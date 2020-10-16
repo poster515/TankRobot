@@ -26,7 +26,7 @@
       var x = setInterval(function() {
 
         $.getJSON('/time_left', function(data) {
-          if data.redirect) {
+          if (data.redirect) {
               window.location.href = data.redirect;
           } else {
               end_time = data.end_time; // unix epoch time, in seconds, that ends our turn
