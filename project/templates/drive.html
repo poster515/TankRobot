@@ -42,7 +42,7 @@
                 if (distance <= 0) {
                   clearInterval(x);
                   document.getElementById("timer").innerHTML = "EXPIRED";
-                  $.get('/drive_timeout', function(response) {
+                  $.get('/driver_timeout', function(response) {
                     if (response.redirect) {
                       window.location.href = response.redirect;
                     }

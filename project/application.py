@@ -272,8 +272,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
         return jsonify(is_it_my_turn = "False")
 
 
-    @app.route("/drive_timeout")
-    def drive_timeout():
+    @app.route("/driver_timeout")
+    def driver_timeout():
         # wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         try:
             # try to remove that user from the DB
