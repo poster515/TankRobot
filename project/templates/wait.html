@@ -23,9 +23,12 @@
             {% endif %}
           </tbody>
       </table>
-      <form>
+      <!-- <form>
         <!-- <a href="/drive"><button class="btn btn-default"></button></a> -->
-        <a href="/drive" id=drive_button><button class="btn btn-default"></button></a>
+        <!-- <a href="/drive" id=drive_button><button class="btn btn-default"></button></a>
+      </form> --> -->
+      <form action="/drive" method="get">
+          <button id=drive_button class="btn btn-primary" type="submit"></button>
       </form>
       <script>
         document.getElementById('drive_button').style.visibility="hidden";
