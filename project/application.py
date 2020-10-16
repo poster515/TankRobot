@@ -23,7 +23,7 @@ else:
     print("Error creating table, exiting program.")
     sys.exit()
 
-def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
+def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60):
 
     # control debug print statements (Flask does a lot of this anyway)
     DEBUG = True
@@ -296,11 +296,13 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
             try:
                 # (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
                 # finally, update the time by which the next user must start driving for the next user
+                print("driver_timeout: trying to update user entry")
                 db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
                 db_conn.commit()
                 # print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
             except:
                 # there is no next user.
+                print("driver_timeout: could not update user entry.")
                 pass
 
         except KeyError:
