@@ -163,7 +163,9 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
             else:
                 return jsonify(end_time = drive_timeout)
         except:
-            print("Not sure how someone got to this route...")
+            db_conn.cursor().execute("DELETE FROM users WHERE rowid = (SELECT min(rowid) FROM users);", (user_name, IP_addr))
+            db_conn.commit()
+            print("Not sure how someone got to this time_left route...")
             session.clear()
             return jsonify(dict(redirect='/'))
 
