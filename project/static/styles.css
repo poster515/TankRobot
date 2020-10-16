@@ -32,9 +32,15 @@ nav .navbar-brand .green
 }
 
 #drive_button {
+  margin: auto;
+  padding-top: 20px;
   background-color: red;
   font-weight: bold;
   text-align: center;
+}
+
+#drive_button:hover {
+  background-color: green;
 }
 
 .drive_header {
