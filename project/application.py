@@ -173,8 +173,6 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
     @app.route("/drive", methods = ["GET"])
     def drive():
         db_conn = create_connection(database)
-        # drive_timeout = 1 * 60.0    # i.e., one minute of drive time
-
         user_name = ""
         IP_addr = ""
         try:
@@ -229,7 +227,9 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
 
     @app.route("/check_turn")
     def check_turn():
-        # wait_timeout = 1 * 60
+        """ Called from the wait.html page, this function checks whether to display
+            the DRIVE button for a user.
+        """
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -245,6 +245,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
                 session.clear()
                 return jsonify(dict(redirect='/'))
             (next_user, next_user_IP, can_drive, _, candrive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            print("next_user: {}, next_user_IP: {}, can_drive: {}, candrive_endtime: {}".format(next_user, next_user_IP, can_drive, candrive_endtime))
             if can_drive == "True" and candrive_endtime >= time.time():
                 if next_user == user_name:
                     print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
