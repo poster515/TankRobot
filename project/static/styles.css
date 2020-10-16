@@ -31,6 +31,11 @@ nav .navbar-brand .green
   height: inherit;
 }
 
+#drive_button {
+  background-color: red;
+  font-weight: bold;
+}
+
 .drive_header {
   background-color: #ffffff;
   width: auto;
