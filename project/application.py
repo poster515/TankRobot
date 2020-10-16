@@ -212,7 +212,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 else: # update their status to "driving"
                     print("current time is {}".format(int(time.time())))
                     end_time = int(time.time()) + drive_timeout
-                    print("seconds remaining for user {} is {}".format(user_name, end_time))
+                    print("seconds remaining for user {} is {}".format(user_name, drive_timeout))
                     db_conn.cursor().execute("UPDATE users SET can_drive='False', is_driving='True', drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (end_time, ))
                     db_conn.commit()
                     print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, end_time - int(time.time())))
@@ -244,9 +244,15 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 # this user doesn't even exist in our database...
                 session.clear()
                 return jsonify(dict(redirect='/'))
-            (next_user, next_user_IP, can_drive, _, candrive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            (next_user, next_user_IP, can_drive, is_driving, candrive_endtime, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             print("next_user: {}, next_user_IP: {}, can_drive: {}, candrive_endtime: {}".format(next_user, next_user_IP, can_drive, candrive_endtime))
-            if can_drive == "True" and candrive_endtime >= time.time():
+            if is_driving == "False" and can_drive == "False":
+                # we know that this user is next since they're not driving and have not been selected to drive.
+                print("User {} at IP {} can now drive.".format(next_user, next_user_IP))
+                db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+                db_conn.commit()
+                return jsonify(is_it_my_turn = "True")
+            elif can_drive == "True" and candrive_endtime >= time.time():
                 if next_user == user_name:
                     print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
                     return jsonify(is_it_my_turn = "True")
@@ -266,6 +272,9 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                     # there is no next user.
                     pass
                 return jsonify(dict(redirect='/'))
+            else:
+                print("User {} from IP {} is still waiting".format(user_name, IP_addr))
+                return jsonify(is_it_my_turn = "False")
 
         except (KeyError, AssertionError):
             pass
@@ -293,17 +302,18 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 GPIO.output(IN3, GPIO.LOW)
                 GPIO.output(IN4, GPIO.LOW)
 
-            try:
-                # (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-                # finally, update the time by which the next user must start driving for the next user
-                print("driver_timeout: trying to update user entry")
-                db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
-                db_conn.commit()
-                # print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
-            except:
-                # there is no next user.
-                print("driver_timeout: could not update user entry.")
-                pass
+            # try:
+            #     # (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            #     # finally, update the time by which the next user must start driving for the next user
+            #     print("driver_timeout: trying to update user entry")
+            #
+            #     db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+            #     db_conn.commit()
+            #     # print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+            # except:
+            #     # there is no next user.
+            #     print("driver_timeout: could not update user entry.")
+            #     pass
 
         except KeyError:
             # user_name not found in the session
