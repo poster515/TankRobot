@@ -60,7 +60,7 @@
                         if (distance <= 0) {
                           clearInterval(y);
                           $('a#drive_button').style.visibility="hidden";
-                          $.get('/wait_timeout', function(response) {
+                          $.get('/user_wait_timeout', function(response) {
                             if (response.redirect) {
                               window.location.href = response.redirect;
                             }
@@ -68,7 +68,7 @@
                         } // if (distance <= 0)
                       }, 1000);
                   } //if (my_turn == True)
-                } //else 
+                } //else
             }); // getJSON
           }, 1000);
         </script>

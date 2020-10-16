@@ -74,7 +74,6 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
     @app.route("/", methods = ["GET", "POST"])
     def index():
         """Show Home Page"""
-        # wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         if request.method == "POST":
             try:
                 # first make sure that the user in this browser/at this IP address
@@ -190,16 +189,9 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("It is user {} at {}'s turn!!".format(user_name, IP_addr))
             try:
-                if can_drive == 'True' and candrive_endtime < time.time():
+                if (can_drive == 'True' and candrive_endtime < time.time()) or (is_driving == 'True' and drive_endtime < time.time()):
                     # they've waited too long. YEET
                     print("User {} at {} waited too long to start driving!".format(next_user, next_user_IP))
-                    db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
-                    db_conn.commit()
-                    session.clear()
-                    return redirect(url_for("index"))
-                elif is_driving == 'True' and drive_endtime < time.time():
-                    # if already driving, check if they've outstayed their driving welcome
-                    print("user must have come back to this page, and their turn is over. YEET")
                     db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
                     db_conn.commit()
                     session.clear()
@@ -210,9 +202,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                     print("User {} at {} should be driving with {} s left!!".format(user_name, IP_addr, drive_endtime - int(time.time())))
 
                 else: # update their status to "driving"
-                    print("current time is {}".format(int(time.time())))
                     end_time = int(time.time()) + drive_timeout
-                    print("seconds remaining for user {} is {}".format(user_name, drive_timeout))
                     db_conn.cursor().execute("UPDATE users SET can_drive='False', is_driving='True', drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (end_time, ))
                     db_conn.commit()
                     print("User {} at {} can now drive with {} s left!!".format(user_name, IP_addr, end_time - int(time.time())))
@@ -246,18 +236,17 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 return jsonify(dict(redirect='/'))
             (next_user, next_user_IP, can_drive, is_driving, candrive_endtime, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             print("next_user: {}, next_user_IP: {}, can_drive: {}, candrive_endtime: {}".format(next_user, next_user_IP, can_drive, candrive_endtime))
-            if is_driving == "False" and can_drive == "False":
-                # we know that this user is next since they're not driving and have not been selected to drive.
-                print("User {} at IP {} can now drive.".format(next_user, next_user_IP))
-                db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
-                db_conn.commit()
+            # if is_driving == "False" and can_drive == "False":
+            #     # we know that this user is next since they're not driving and have not been selected to drive.
+            #     print("User {} at IP {} can now drive.".format(next_user, next_user_IP))
+            #     db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+            #     db_conn.commit()
+            #     return jsonify(is_it_my_turn = "True")
+            if can_drive == "True" and candrive_endtime >= time.time() and next_user == user_name:
+                print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
                 return jsonify(is_it_my_turn = "True")
-            elif can_drive == "True" and candrive_endtime >= time.time():
-                if next_user == user_name:
-                    print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
-                    return jsonify(is_it_my_turn = "True")
-            elif can_drive == "True" and candrive_endtime < time.time():
-                print("user waited too long on Wait page, and their turn is over. YEET")
+            elif (can_drive == "True" and candrive_endtime < time.time()) or (is_driving == "True" and drive_endtime < time.time()):
+                print("user waited or took too long too drive, and their turn is over. YEET")
                 db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
                 db_conn.commit()
                 session.clear()
@@ -284,7 +273,6 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
 
     @app.route("/driver_timeout")
     def driver_timeout():
-        # wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -302,18 +290,17 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 GPIO.output(IN3, GPIO.LOW)
                 GPIO.output(IN4, GPIO.LOW)
 
-            # try:
-            #     # (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            #     # finally, update the time by which the next user must start driving for the next user
-            #     print("driver_timeout: trying to update user entry")
-            #
-            #     db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
-            #     db_conn.commit()
-            #     # print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
-            # except:
-            #     # there is no next user.
-            #     print("driver_timeout: could not update user entry.")
-            #     pass
+            try:
+                (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+                # finally, update the time by which the next user must start driving for the next user
+                print("driver_timeout: trying to update user entry")
+                db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
+                db_conn.commit()
+                print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+            except:
+                # there is no next user.
+                print("driver_timeout: could not update user entry.")
+                pass
 
         except KeyError:
             # user_name not found in the session
@@ -341,8 +328,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         else:
             return render_template("wait.html", user_name=None, user_names=None)
 
-    @app.route("/wait_timeout")
-    def wait_timeout():
+    @app.route("/user_wait_timeout")
+    def user_wait_timeout():
         """ This function is called when the user has waited past their alloted time to take controls
         of the tank, from the wait page.
         """
