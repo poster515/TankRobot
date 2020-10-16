@@ -294,11 +294,11 @@ def create_app(DEV: bool = True, wait_timeout: int = 1, drive_timeout: int = 1):
                 GPIO.output(IN4, GPIO.LOW)
 
             try:
-                (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+                # (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
                 # finally, update the time by which the next user must start driving for the next user
                 db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
                 db_conn.commit()
-                print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
+                # print("Set user {} at {}'s can_drive_endtime to {}".format(next_user, next_user_IP, can_drive_endtime))
             except:
                 # there is no next user.
                 pass
