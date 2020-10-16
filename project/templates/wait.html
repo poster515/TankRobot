@@ -28,6 +28,7 @@
 
       <script>
         document.getElementById('drive_button').style.visibility="hidden";
+
         document.getElementById('drive_button').style.backgroundColor = "red";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
@@ -37,40 +38,38 @@
                   window.location.href = data.redirect;
                 } else {
                   my_turn = data.is_it_my_turn;
-                }
-            });
+                  if (my_turn == "True") {
+                      document.getElementById('drive_button').style.visibility="visible";
+                      // once we know it's our turn to drive, give the user two minutes to
+                      // navigate to the Drive page.
+                      const n_minutes = 1; // i.e., 2 minutes to go to Drive page
+                      const ms_per_n_minutes = 1000 * 60 * n_minutes;
+                      const now_plus_N_minutes = Date.now() + ms_per_n_minutes; //units are milliseconds
 
-            if (my_turn == "True") {
-                document.getElementById('drive_button').style.visibility="visible";
-                clearInterval(x);
-                // once we know it's our turn to drive, give the user two minutes to
-                // navigate to the Drive page.
-                const n_minutes = 1; // i.e., 2 minutes to go to Drive page
-                const ms_per_n_minutes = 1000 * 60 * n_minutes;
-                const now_plus_N_minutes = Date.now() + ms_per_n_minutes; //units are milliseconds
+                      var y = setInterval(function() {
+                        // Find the distance between now and the count down date
+                        var distance = now_plus_N_minutes - Date.now();
 
-                var y = setInterval(function() {
-                  // Find the distance between now and the count down date
-                  var distance = now_plus_N_minutes - Date.now();
+                        // Time calculations for minutes and seconds
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                  // Time calculations for minutes and seconds
-                  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        // Display the result in the element with id="demo"
+                        document.getElementById('drive_button').innerHTML = "GO DRIVE: " + minutes + "m " + seconds + "s ";
 
-                  // Display the result in the element with id="demo"
-                  document.getElementById('drive_button').innerHTML = "GO DRIVE: " + minutes + "m " + seconds + "s ";
-
-                  if (distance <= 0) {
-                    clearInterval(y);
-                    $('a#drive_button').style.visibility="hidden";
-                    $.get('/wait_timeout', function(response) {
-                      if (response.redirect) {
-                        window.location.href = response.redirect;
-                      }
-                    });
-                  } // if (distance <= 0)
-                }, 1000);
-            } //if (my_turn == True)
+                        if (distance <= 0) {
+                          clearInterval(y);
+                          $('a#drive_button').style.visibility="hidden";
+                          $.get('/wait_timeout', function(response) {
+                            if (response.redirect) {
+                              window.location.href = response.redirect;
+                            }
+                          });
+                        } // if (distance <= 0)
+                      }, 1000);
+                  } //if (my_turn == True)
+                } //else 
+            }); // getJSON
           }, 1000);
         </script>
 
