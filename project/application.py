@@ -8,6 +8,7 @@ from collections import deque
 import time
 import string
 import os, sys
+import threading
 
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
@@ -27,8 +28,29 @@ def create_app(DEV: bool = True):
     # control debug print statements (Flask does a lot of this anyway)
     DEBUG = True
 
+    #Definition of  motor pins
+    IN1 = 20 # Motor A, pin2
+    IN2 = 21 # Motor A, pin1
+    IN3 = 19 # Motor B, pin2
+    IN4 = 26 # Motor B, pin1
+    ENA = 16 # Motor A, PWM
+    ENB = 13 # Motor B, PWM
+    PUMP = 2 # IO2 is the fan output
+
     if not DEV:
-        from tank_cmd import left, right, forward, reverse, shot
+        import RPi.GPIO as GPIO
+        import shot
+        GPIO.setup(ENA,GPIO.OUT,initial=GPIO.HIGH)
+        GPIO.setup(IN1,GPIO.OUT,initial=GPIO.LOW)
+        GPIO.setup(IN2,GPIO.OUT,initial=GPIO.LOW)
+        GPIO.setup(ENB,GPIO.OUT,initial=GPIO.HIGH)
+        GPIO.setup(IN3,GPIO.OUT,initial=GPIO.LOW)
+        GPIO.setup(IN4,GPIO.OUT,initial=GPIO.LOW)
+        GPIO.setup(PUMP,GPIO.OUT,initial=GPIO.HIGH)
+        pwm_ENA = GPIO.PWM(ENA, 2000)
+        pwm_ENB = GPIO.PWM(ENB, 2000)
+        pwm_ENA.start(0)
+        pwm_ENB.start(0)
 
     # Configure application
     app = Flask(__name__)
@@ -52,7 +74,7 @@ def create_app(DEV: bool = True):
     @app.route("/", methods = ["GET", "POST"])
     def index():
         """Show Home Page"""
-        wait_timeout = 2 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
+        wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         if request.method == "POST":
             try:
                 # first make sure that the user in this browser/at this IP address
@@ -123,6 +145,10 @@ def create_app(DEV: bool = True):
 
     @app.route("/time_left")
     def time_left():
+        """
+            Function called from drive.html which returns the time in seconds
+            available for the driver to maintain control.
+        """
         db_conn = create_connection(database)
         (next_user, next_user_IP, _, is_driving, _, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
         try:
@@ -199,7 +225,7 @@ def create_app(DEV: bool = True):
 
     @app.route("/check_turn")
     def check_turn():
-        wait_timeout = 2 * 60
+        wait_timeout = 1 * 60
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -211,7 +237,7 @@ def create_app(DEV: bool = True):
             if can_drive == "True" and candrive_endtime >= time.time():
                 if next_user == user_name:
                     print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
-                    return jsonify(is_it_my_turn = True)
+                    return jsonify(is_it_my_turn = "True")
             elif can_drive == "True" and candrive_endtime < time.time():
                 print("user waited too long on Wait page, and their turn is over. YEET")
                 db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
@@ -232,12 +258,12 @@ def create_app(DEV: bool = True):
         except (KeyError, AssertionError):
             pass
         # if we're not next, or there's no session key, return false
-        return jsonify(is_it_my_turn = False)
+        return jsonify(is_it_my_turn = "False")
 
 
     @app.route("/drive_timeout")
     def drive_timeout():
-        wait_timeout = 2 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
+        wait_timeout = 1 * 60 # i.e., you have five minutes to start driving otherwise you get kicked out
         try:
             # try to remove that user from the DB
             user_name = session["user_name"]
@@ -247,6 +273,13 @@ def create_app(DEV: bool = True):
             # delete this user from the DB
             db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
             db_conn.commit()
+
+            # stop all outputs
+            if not DEV:
+                GPIO.output(IN1, GPIO.LOW)
+                GPIO.output(IN2, GPIO.LOW)
+                GPIO.output(IN3, GPIO.LOW)
+                GPIO.output(IN4, GPIO.LOW)
 
             try:
                 (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
@@ -284,6 +317,32 @@ def create_app(DEV: bool = True):
         else:
             return render_template("wait.html", user_name=None, user_names=None)
 
+    @app.route("/wait_timeout")
+    def wait_timeout():
+        """ This function is called when the user has waited past their alloted time to take controls
+        of the tank, from the wait page.
+        """
+        try:
+            user_name = session["user_name"]
+            IP_addr = session["IP_addr"]
+        except KeyError:
+            print("Wait: Could not find user_name in session.")
+            return "nothing"
+
+        # grab next user currently waiting (should be the user calling this function)
+        db_conn = create_connection(database)
+        (next_user, next_user_IP, can_drive, _, can_drive_endtime, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+
+        if can_drive == "True" and can_drive_endtime < time.time():
+            # just make sure we got the right user.
+            print("User {} at IP {} did not take control of the tank in time!!".format(user_name, IP_addr))
+            db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
+            db_conn.commit()
+            # clear session data and redirect to the wait page
+            session.clear()
+        # either way, return them to the wait page.
+        return jsonify(dict(redirect='/wait'))
+
     @app.route('/left_start')
     def left_start():
         db_conn = create_connection(database)
@@ -294,13 +353,21 @@ def create_app(DEV: bool = True):
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started turning left".format(user_name))
+
+            if not DEV:
+                GPIO.output(IN1, GPIO.LOW)
+                GPIO.output(IN2, GPIO.HIGH)
+                GPIO.output(IN3, GPIO.HIGH)
+                GPIO.output(IN4, GPIO.LOW)
+                pwm_ENA.ChangeDutyCycle(50)
+                pwm_ENB.ChangeDutyCycle(50)
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
         return "Success"
 
-    @app.route('/left_stop')
-    def left_stop():
+    @app.route('/stop')
+    def stop():
         db_conn = create_connection(database)
         try:
             user_name = session["user_name"]
@@ -308,7 +375,12 @@ def create_app(DEV: bool = True):
             (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             assert user_name == next_user
             assert next_user_IP == IP_addr
-            print("User {} stopped turning left".format(user_name))
+            print("User {} stopped moving".format(user_name))
+            if not DEV:
+                GPIO.output(IN1, GPIO.LOW)
+                GPIO.output(IN2, GPIO.LOW)
+                GPIO.output(IN3, GPIO.LOW)
+                GPIO.output(IN4, GPIO.LOW)
         except:
             print("non-registered user has requested to stop")
 
@@ -324,26 +396,17 @@ def create_app(DEV: bool = True):
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started turning right".format(user_name))
+            if not DEV:
+                GPIO.output(IN1, GPIO.HIGH)
+                GPIO.output(IN2, GPIO.LOW)
+                GPIO.output(IN3, GPIO.LOW)
+                GPIO.output(IN4, GPIO.HIGH)
+                pwm_ENA.ChangeDutyCycle(50)
+                pwm_ENB.ChangeDutyCycle(50)
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
         return "Success"
-
-    @app.route('/right_stop')
-    def right_stop():
-        db_conn = create_connection(database)
-        try:
-            user_name = session["user_name"]
-            IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            assert user_name == next_user
-            assert next_user_IP == IP_addr
-            print("User {} stopped turning right".format(user_name))
-        except:
-            print("non-registered user has requested to stop")
-
-        return "Success"
-
 
     @app.route('/forward_start')
     def forward_start():
@@ -355,24 +418,16 @@ def create_app(DEV: bool = True):
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started going forward".format(user_name))
+            if not DEV:
+                GPIO.output(IN1, GPIO.HIGH)
+                GPIO.output(IN2, GPIO.LOW)
+                GPIO.output(IN3, GPIO.HIGH)
+                GPIO.output(IN4, GPIO.LOW)
+                pwm_ENA.ChangeDutyCycle(50)
+                pwm_ENB.ChangeDutyCycle(50)
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
-        return "Success"
-
-    @app.route('/forward_stop')
-    def forward_stop():
-        db_conn = create_connection(database)
-        try:
-            user_name = session["user_name"]
-            IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            assert user_name == next_user
-            assert next_user_IP == IP_addr
-            print("User {} stopped going forward".format(user_name))
-        except:
-            print("non-registered user has requested to stop")
-
         return "Success"
 
     @app.route('/reverse_start')
@@ -385,24 +440,16 @@ def create_app(DEV: bool = True):
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} started reversing".format(user_name))
+            if not DEV:
+                GPIO.output(IN1, GPIO.LOW)
+                GPIO.output(IN2, GPIO.HIGH)
+                GPIO.output(IN3, GPIO.LOW)
+                GPIO.output(IN4, GPIO.HIGH)
+                pwm_ENA.ChangeDutyCycle(50)
+                pwm_ENB.ChangeDutyCycle(50)
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
-        return "Success"
-
-    @app.route('/reverse_stop')
-    def reverse_stop():
-        db_conn = create_connection(database)
-        try:
-            user_name = session["user_name"]
-            IP_addr = session["IP_addr"]
-            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
-            assert user_name == next_user
-            assert next_user_IP == IP_addr
-            print("User {} stopped reversing".format(user_name))
-        except:
-            print("non-registered user has requested to stop")
-
         return "Success"
 
     @app.route('/shot_start')
@@ -415,6 +462,10 @@ def create_app(DEV: bool = True):
             assert user_name == next_user
             assert next_user_IP == IP_addr
             print("User {} poured a shot!".format(user_name))
+            if not DEV:
+                t = threading.Thread(target=shot.pour_shot, args=())
+                t.start()
+
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
