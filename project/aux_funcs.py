@@ -39,10 +39,10 @@ def init():
     GPIO.setup(Servo_cam_x_y, GPIO.OUT)
     GPIO.setup(Servo_cam_z, GPIO.OUT)
 
-    pwm_servo_sensor = GPIO.PWM(Servo_sensor, 50)
+    pwm_servo_sensor = GPIO.PWM(Servo_sensor, 50) # 50 Hz PWM signal
     pwm_servo_cam_x_y = GPIO.PWM(Servo_cam_x_y, 50)
     pwm_servo_cam_z = GPIO.PWM(Servo_cam_z, 50)
-    pwm_servo_sensor.start(0)
+    pwm_servo_sensor.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
     pwm_servo_cam_x_y.start(0)
     pwm_servo_cam_z.start(0)
 
@@ -83,8 +83,9 @@ def Distance():
 
     t2 = time.time()
     time.sleep(0.01)
-    print("distance is {}".format(((t2 - t1)* 340 / 2) * 100))
-    return ((t2 - t1)* 340 / 2) * 100
+    distance = (((t2 - t1)* 340 / 2) * 100) / 2.54
+    print("distance is {0:3.2f} in".format(distance))
+    return True
 
 def Distance_test():
     num = 0

@@ -487,7 +487,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         return "Success"
 
     @app.route('/camera')
-    def shot_start():
+    def camera():
         db_conn = create_connection(database)
         try:
             user_name = session["user_name"]
