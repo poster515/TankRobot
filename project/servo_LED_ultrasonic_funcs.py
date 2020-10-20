@@ -101,9 +101,9 @@ def Distance_test():
         ultrasonic.append(distance)
         num = num + 1
         time.sleep(0.01)
-    print ultrasonic
+    print(ultrasonic)
     distance = (ultrasonic[1] + ultrasonic[2] + ultrasonic[3])/3
-    print("distance is {}".format(distance) )
+    print("distance is {}".format(distance))
     return distance
 
 #The servo rotates to the specified angle
