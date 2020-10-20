@@ -30,7 +30,6 @@ def init():
     global pwm_servo_sensor
     global pwm_servo_cam_x_y
     global pwm_servo_cam_z
-    GPIO.setup(key,GPIO.IN)
     GPIO.setup(EchoPin,GPIO.IN)
     GPIO.setup(TrigPin,GPIO.OUT)
     GPIO.setup(LED_R, GPIO.OUT)
@@ -40,9 +39,9 @@ def init():
     GPIO.setup(Servo_cam_x_y, GPIO.OUT)
     GPIO.setup(Servo_cam_z, GPIO.OUT)
 
-    pwm_servo_sensor = GPIO.PWM(ServoPin, 50)
-    pwm_servo_cam_x_y = GPIO.PWM(ServoPin, 50)
-    pwm_servo_cam_z = GPIO.PWM(ServoPin, 50)
+    pwm_servo_sensor = GPIO.PWM(Servo_sensor, 50)
+    pwm_servo_cam_x_y = GPIO.PWM(Servo_cam_x_y, 50)
+    pwm_servo_cam_z = GPIO.PWM(Servo_cam_z, 50)
     pwm_servo_sensor.start(0)
     pwm_servo_cam_x_y.start(0)
     pwm_servo_cam_z.start(0)
