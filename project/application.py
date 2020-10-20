@@ -482,7 +482,26 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 t.start()
 
         except:
-            print("non-registered user has requested to start")
+            print("non-registered user has requested to pour shot")
+        # javascript requires a return statement
+        return "Success"
+
+    @app.route('/camera')
+    def shot_start():
+        db_conn = create_connection(database)
+        try:
+            user_name = session["user_name"]
+            IP_addr = session["IP_addr"]
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            assert user_name == next_user
+            assert next_user_IP == IP_addr
+            print("User {} took a picture!".format(user_name))
+            if not DEV:
+                t = threading.Thread(target=os.system('uvccapture -v -m'), args=())
+                t.start()
+
+        except:
+            print("non-registered user has requested to take picture")
         # javascript requires a return statement
         return "Success"
 

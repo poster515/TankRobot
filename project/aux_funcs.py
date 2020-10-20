@@ -37,8 +37,8 @@ def init():
     GPIO.setup(LED_G, GPIO.OUT)
     GPIO.setup(LED_B, GPIO.OUT)
     GPIO.setup(Servo_sensor, GPIO.OUT)
-    GPIO.setup(Servo_sensor, GPIO.OUT)
-    GPIO.setup(Servo_sensor, GPIO.OUT)
+    GPIO.setup(Servo_cam_x_y, GPIO.OUT)
+    GPIO.setup(Servo_cam_z, GPIO.OUT)
 
     pwm_servo_sensor = GPIO.PWM(ServoPin, 50)
     pwm_servo_cam_x_y = GPIO.PWM(ServoPin, 50)
@@ -118,46 +118,23 @@ def servo_move(servo_pwm, pos):
     # 2.5ms-----------------180°
     servo_pwm.ChangeDutyCycle(pos/90 + 0.5)
 
-def servo_color_carstate():
+def servo_color_carstate(color):
 
-    init()
-    back(20, 20)
-    time.sleep(0.08)
-    brake()
-
-    servo_appointed_detection(0)
-    time.sleep(0.8)
-    rightdistance = Distance_test()
-
-    servo_appointed_detection(180)
-    time.sleep(0.8)
-    leftdistance = Distance_test()
-
-    servo_appointed_detection(90)
-    time.sleep(0.8)
-    frontdistance = Distance_test()
-
-    if leftdistance < 30 and rightdistance < 30 and frontdistance < 30:
+    if color == "RED":
         #Magenta
         GPIO.output(LED_R, GPIO.HIGH)
         GPIO.output(LED_G, GPIO.LOW)
-        GPIO.output(LED_B, GPIO.HIGH)
-        spin_right(85, 85)
-        time.sleep(0.58)
-    elif leftdistance >= rightdistance:
+        GPIO.output(LED_B, GPIO.LOW)
+    elif color == "BLUE":
         #Blue
         GPIO.output(LED_R, GPIO.LOW)
         GPIO.output(LED_G, GPIO.LOW)
         GPIO.output(LED_B, GPIO.HIGH)
-    	spin_left(85, 85)
-        time.sleep(0.28)
-    elif leftdistance <= rightdistance:
-        #Magenta
-        GPIO.output(LED_R, GPIO.HIGH)
-        GPIO.output(LED_G, GPIO.LOW)
-        GPIO.output(LED_B, GPIO.HIGH)
-        spin_right(85, 85)
-        time.sleep(0.28)
+    elif color == "GREEN":
+        #Green
+        GPIO.output(LED_R, GPIO.LOW)
+        GPIO.output(LED_G, GPIO.HIGH)
+        GPIO.output(LED_B, GPIO.LOW)
 
 def stop():
     pwm_servo_sensor.stop()
