@@ -43,7 +43,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         #Set the GPIO port to BCM encoding mode
         GPIO.setmode(GPIO.BCM)
         #Ignore warning information
-        GPIO.setwarnings(True)
+        GPIO.setwarnings(False)
         GPIO.setup(ENA,GPIO.OUT,initial=GPIO.HIGH)
         GPIO.setup(IN1,GPIO.OUT,initial=GPIO.LOW)
         GPIO.setup(IN2,GPIO.OUT,initial=GPIO.LOW)

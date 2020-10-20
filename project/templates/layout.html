@@ -37,14 +37,17 @@
                   {% if session.user_name %}
                     <a class="navbar-brand" href="/"><span class="black">: {{ session.user_name }}</span></a>
                   {% endif %}
-                  <div class="collapse navbar-collapse" id="navbar">
+            </nav>
+
+                  <!-- <div class="collapse navbar-collapse" id="navbar"> -->
+                    <nav class="navbar navbar-expand-md navbar-light bg-light border">
                       <ul class="navbar-nav ml-auto mt-2">
                           <li class="nav-item"><a class="nav-link" href="/">Main</a></li>
                           <li class="nav-item"><a class="nav-link" href="/wait">Waiting Room</a></li>
                           <li class="nav-item"><a class="nav-link" href="/drive">Drive</a></li>
                       </ul>
-                  </div>
-              </nav>
+                  <!-- </div> -->
+                    </nav>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class=flashes>

@@ -101,7 +101,6 @@ def brake(delaytime):
     time.sleep(delaytime)
 
 #pump
-# TODO: should this output be a PWM signal?
 def pump(delaytime):
     # pump is active low (i.e., turn low to turn on)
     GPIO.output(PUMP, GPIO.LOW)
@@ -141,5 +140,5 @@ def pump_test():
 
     for _ in range(2):
         pump(5)
-    
+
     GPIO.cleanup()
