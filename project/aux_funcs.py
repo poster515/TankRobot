@@ -149,7 +149,7 @@ def servo_color_carstate():
         GPIO.output(LED_R, GPIO.LOW)
         GPIO.output(LED_G, GPIO.LOW)
         GPIO.output(LED_B, GPIO.HIGH)
-    	spin_left(85, 85
+    	spin_left(85, 85)
         time.sleep(0.28)
     elif leftdistance <= rightdistance:
         #Magenta
