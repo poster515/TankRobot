@@ -12,9 +12,9 @@ import threading
 
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
+from project.aux_funcs import *
 
 # initialize new db connection and create the only table.
-# consist of [id][user_name][IP_address]
 database = "./tank_control.db"
 db_conn = create_connection(database)
 if db_conn:
@@ -37,6 +37,20 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
     ENB = 13 # Motor B, PWM
     PUMP = 2 # IO2 is the fan output
 
+    #Definition of  ultrasonic module pins
+    EchoPin = 0
+    TrigPin = 1
+
+    #Definition of RGB module pins
+    LED_R = 22
+    LED_G = 27
+    LED_B = 24
+
+    #Definition of servo pin
+    Servo_sensor = 23
+    Servo_cam_x_y = 11
+    Servo_cam_z = 9
+
     if not DEV:
         import RPi.GPIO as GPIO
         import project.shot as shot
@@ -44,6 +58,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         GPIO.setmode(GPIO.BCM)
         #Ignore warning information
         GPIO.setwarnings(False)
+
+        # Motor Setup
         GPIO.setup(ENA,GPIO.OUT,initial=GPIO.HIGH)
         GPIO.setup(IN1,GPIO.OUT,initial=GPIO.LOW)
         GPIO.setup(IN2,GPIO.OUT,initial=GPIO.LOW)
@@ -51,10 +67,29 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         GPIO.setup(IN3,GPIO.OUT,initial=GPIO.LOW)
         GPIO.setup(IN4,GPIO.OUT,initial=GPIO.LOW)
         GPIO.setup(PUMP,GPIO.OUT,initial=GPIO.HIGH)
-        pwm_ENA = GPIO.PWM(ENA, 2000)
+
+        # LED, ultrasonic, and servo setup
+        GPIO.setup(EchoPin,GPIO.IN)
+        GPIO.setup(TrigPin,GPIO.OUT)
+        GPIO.setup(LED_R, GPIO.OUT)
+        GPIO.setup(LED_G, GPIO.OUT)
+        GPIO.setup(LED_B, GPIO.OUT)
+        GPIO.setup(Servo_sensor, GPIO.OUT)
+        GPIO.setup(Servo_cam_x_y, GPIO.OUT)
+        GPIO.setup(Servo_cam_z, GPIO.OUT)
+
+        # PWM Initialization
+        pwm_ENA = GPIO.PWM(ENA, 2000) # 50 Hz PWM signal
         pwm_ENB = GPIO.PWM(ENB, 2000)
-        pwm_ENA.start(0)
+        pwm_servo_sensor = GPIO.PWM(Servo_sensor, 50)
+        pwm_servo_cam_x_y = GPIO.PWM(Servo_cam_x_y, 50)
+        pwm_servo_cam_z = GPIO.PWM(Servo_cam_z, 50)
+
+        pwm_ENA.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
         pwm_ENB.start(0)
+        pwm_servo_sensor.start(0)
+        pwm_servo_cam_x_y.start(0)
+        pwm_servo_cam_z.start(0)
 
     # Configure application
     app = Flask(__name__)
@@ -434,12 +469,13 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("User {} started going forward".format(user_name))
             if not DEV:
-                GPIO.output(IN1, GPIO.HIGH)
-                GPIO.output(IN2, GPIO.LOW)
-                GPIO.output(IN3, GPIO.HIGH)
-                GPIO.output(IN4, GPIO.LOW)
-                pwm_ENA.ChangeDutyCycle(50)
-                pwm_ENB.ChangeDutyCycle(50)
+                if Distance() > 3: # 3 inches, to avoid running into something
+                    GPIO.output(IN1, GPIO.HIGH)
+                    GPIO.output(IN2, GPIO.LOW)
+                    GPIO.output(IN3, GPIO.HIGH)
+                    GPIO.output(IN4, GPIO.LOW)
+                    pwm_ENA.ChangeDutyCycle(50)
+                    pwm_ENB.ChangeDutyCycle(50)
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
@@ -497,7 +533,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("User {} took a picture!".format(user_name))
             if not DEV:
-                t = threading.Thread(target=os.system('uvccapture -v -m'), args=())
+                t = threading.Thread(target=os.system('uvccapture -v -m -x1280 -y960'), args=())
                 t.start()
 
         except:
