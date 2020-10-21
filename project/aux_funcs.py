@@ -85,7 +85,7 @@ def Distance():
     time.sleep(0.01)
     distance = (((t2 - t1)* 340 / 2) * 100) / 2.54
     print("distance is {0:3.2f} in".format(distance))
-    return True
+    return distance
 
 def Distance_test():
     num = 0
