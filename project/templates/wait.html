@@ -7,6 +7,8 @@
 {% block main %}
     <div>
       <div class="wait-grid-container">
+        <!-- hidden button to take user to drive page -->
+        <div class="wait-grid-item"><form><button id="drive_button" class="btn btn-primary" type="submit"></button></form></div>
         {% if user_names %}
           {% for user in user_names %}
             <div class="wait-grid-item">{{ user }}</div>
@@ -14,33 +16,10 @@
         {% else %}
           <div class="wait-grid-item">No users are waiting! Go sign up ya dingus!</div>
         {% endif %}
-        <!-- hidden button -->
-          <div class="wait-grid-item"><button id="drive_button" class="btn btn-primary" type="submit"></button></div>
         </div>
-      <!-- show list of all users currently waiting -->
-      <!-- <table width="auto" align="center">
-          <tbody>
-            {% if user_names %}
-              {% for user in user_names %}
-              <tr>
-                  <td>{{ user }}</td>
-              </tr>
-              {% endfor %}
-            {% else %}
-            <tr>
-                <td>No users are waiting! Go sign up ya dingus!</td>
-            </tr>
-            {% endif %}
-          </tbody>
-      </table> -->
 
-      <!-- <form action="/drive" method="get" style="margin:auto;">
-          <button id=drive_button class="btn btn-primary" type="submit"></button>
-      </form> -->
       <script>
         document.getElementById('drive_button').style.visibility="hidden";
-
-        // document.getElementById('drive_button').style.backgroundColor = "red";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = "False";
