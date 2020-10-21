@@ -73,13 +73,12 @@ main
     /* center contents */
     text-align: center;
 }
-/*
-main img
-{
-    /* constrain images on small screens */
-    /* max-width: 100%;
-} */
 
+/* flashed messages */
+ul {
+   font-weight: bold;
+   text-align: center;
+}
 
 /* waiting room list of users */
 /* one column  */
