@@ -476,6 +476,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                     GPIO.output(IN4, GPIO.LOW)
                     pwm_ENA.ChangeDutyCycle(50)
                     pwm_ENB.ChangeDutyCycle(50)
+                else:
+                    print("Can't move forward, distance = {}".format(Distance()))
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
