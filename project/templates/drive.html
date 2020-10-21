@@ -9,6 +9,7 @@
       {% if user_name %}
           <div><h3>Welcome {{ user_name }}!</h3></div>
       {% endif %}
+      <div id="timer"></div>
       <div class="grid-container">
         <!-- First row -->
         <div class="grid-item"></div>
@@ -16,16 +17,16 @@
         <div class="grid-item"></div>
         <!-- second row -->
         <div class="grid-item"><a href=# id=left><button class="btn btn-default">Left</button></a></div>
-        <div class="grid-item"></div>
+        <div class="grid-item"><a href=# id=shot><button class="btn btn-default">Shot!</button></a></div>
         <div class="grid-item"><a href=# id=right><button class="btn btn-default">Right</button></a></div>
         <!-- third row -->
         <div class="grid-item"></div>
         <div class="grid-item"><a href=# id=reverse><button class="btn btn-default">Reverse</button></a></div>
         <div class="grid-item"></div>
         <!-- fourth row -->
-        <div class="grid-item"><a href=# id=servo_x_y><button class="btn btn-default">Camera Up</button></a></div>
+        <div class="grid-item"><a href=# id=servo_x_y><button class="btn btn-default">Camera Pan</button></a></div>
         <div class="grid-item"><a href=# id=pic><button class="btn btn-default"">Picture!</button></a></div>
-        <div class="grid-item"><a href=# id=servo_z><button class="btn btn-default">Camera Down</button></a></div>
+        <div class="grid-item"><a href=# id=servo_z><button class="btn btn-default">Camera Z</button></a></div>
       </div>
 
       <script>
