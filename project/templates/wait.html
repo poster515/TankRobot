@@ -8,7 +8,7 @@
     <div>
       <div class="wait-grid-container">
         <!-- hidden button to take user to drive page -->
-        <div class="wait-grid-item"><form><button id="drive_button" class="btn btn-primary" type="submit"></button></form></div>
+        <div class="wait-grid-item"><button id="drive_button" class="btn btn-primary"></button></div>
         {% if user_names %}
           {% for user in user_names %}
             <div class="wait-grid-item">{{ user }}</div>
@@ -19,7 +19,7 @@
         </div>
 
       <script>
-        document.getElementById('drive_button').style.visibility="hidden";
+        // document.getElementById('drive_button').style.visibility="hidden";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = "False";
@@ -30,6 +30,9 @@
                   my_turn = data.is_it_my_turn;
                   if (my_turn == "True") {
                       document.getElementById('drive_button').style.visibility="visible";
+                      document.getElementById("drive_button").onclick = function () {
+                          location.href = "/drive";
+                      };
                       // once we know it's our turn to drive, give the user two minutes to
                       // navigate to the Drive page.
                       end_time = data.end_time; // seconds until wait_time is up
@@ -55,6 +58,8 @@
                           });
                         } // if (distance <= 0)
                       }, 1000);
+                  } else {
+                    document.getElementById('drive_button').innerHTML = "Users Waiting to Drive:";
                   } //if (my_turn == True)
                 } //else
             }); // getJSON

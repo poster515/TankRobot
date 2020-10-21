@@ -275,12 +275,6 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 return jsonify(dict(redirect='/'))
             (next_user, next_user_IP, can_drive, is_driving, candrive_endtime, drive_endtime) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
             print("next_user: {}, next_user_IP: {}, can_drive: {}, candrive_endtime: {}".format(next_user, next_user_IP, can_drive, candrive_endtime))
-            # if is_driving == "False" and can_drive == "False":
-            #     # we know that this user is next since they're not driving and have not been selected to drive.
-            #     print("User {} at IP {} can now drive.".format(next_user, next_user_IP))
-            #     db_conn.cursor().execute("UPDATE users SET can_drive='True', can_drive_endtime=? WHERE rowid = (SELECT min(rowid) FROM users);", (int(time.time()) + wait_timeout, ))
-            #     db_conn.commit()
-            #     return jsonify(is_it_my_turn = "True")
             if can_drive == "True" and candrive_endtime >= time.time() and next_user == user_name:
                 print("It is in fact {} from IP {}'s turn!!!".format(user_name, IP_addr))
                 return jsonify(is_it_my_turn = "True", end_time=candrive_endtime)
