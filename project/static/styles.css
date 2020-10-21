@@ -90,7 +90,7 @@ main
     overflow-x: auto;
 
     /* center contents */
-    /*text-align: center;*/
+    text-align: center;
 }
 
 main img
@@ -99,34 +99,30 @@ main img
     max-width: 100%;
 }
 
-table {
-  margin-left: auto;
-  margin-right: auto;
-}
 
-th {
-    /*display: table-header;*/
-    font-weight: bold;
-    text-align: left;
-    width: 150px;
+/* waiting room list of users */
+/* one column  */
+.wait-grid-container {
+  display: grid;
+  grid-template-columns: auto;
+  grid-gap: 10px 10px;
+  background-color: #2196F3;
+  padding: 5% 10%;
 }
-td {
-    /*display: table-cell;*/
-    text-align: center;
-    font-weight: bold;
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 10px 0;
+  font-size: 30px;
+  font-weight: bold;
 }
-
-tr {
-  height:40px;
-  border:1px solid black;
-}
-
-tr:nth-child(even) {
+.wait-grid-containerr > div:nth-child(even) {
     background-color: #32a844;
 }
-tr:nth-child(odd) {
+.wait-grid-container > div:nth-child(odd) {
     background-color: #8132a8;
 }
+
 .drive_timer {
   background-color: #ffffff;
 }

@@ -6,9 +6,19 @@
 
 {% block main %}
     <div>
-
+      <div class="wait-grid-container">
+        {% if user_names %}
+          {% for user in user_names %}
+            <div class="wait-grid-item">{{ user }}</div>
+          {% endfor %}
+        {% else %}
+          <div class="wait-grid-item">No users are waiting! Go sign up ya dingus!</div>
+        {% endif %}
+        <!-- hidden button -->
+          <div class="wait-grid-item"><button id="drive_button" class="btn btn-primary" type="submit"></button></div>
+        </div>
       <!-- show list of all users currently waiting -->
-      <table width="auto" align="center">
+      <!-- <table width="auto" align="center">
           <tbody>
             {% if user_names %}
               {% for user in user_names %}
@@ -22,11 +32,11 @@
             </tr>
             {% endif %}
           </tbody>
-      </table>
+      </table> -->
 
-      <form action="/drive" method="get" style="margin:auto;">
+      <!-- <form action="/drive" method="get" style="margin:auto;">
           <button id=drive_button class="btn btn-primary" type="submit"></button>
-      </form>
+      </form> -->
       <script>
         document.getElementById('drive_button').style.visibility="hidden";
 
