@@ -39,16 +39,16 @@
                   {% endif %}
             </nav>
 
-                  <!-- <div class="collapse navbar-collapse" id="navbar"> -->
-                    <nav class="navbar navbar-expand-md navbar-light bg-light border">
-                      <!-- <ul class="navbar-nav ml-auto mt-2"> -->
-                      <ul class="navbar-nav">
-                          <li class="nav-item"><a class="nav-link" href="/">Main</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/wait">Waiting Room</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/drive">Drive</a></li>
-                      </ul>
-                  <!-- </div> -->
-                    </nav>
+            <nav class="navbar navbar-expand-md navbar-light bg-light border">
+              <ul class="navbar-nav">
+                  <span class="nav-item"><a class="nav-link" href="/">Main</a></span>
+                  <span class="nav-item"><a class="nav-link" href="/wait">Waiting Room</a></span>
+                  <span class="nav-item"><a class="nav-link" href="/drive">Drive</a></span>
+                  <!-- <li class="nav-item"><a class="nav-link" href="/">Main</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/wait">Waiting Room</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/drive">Drive</a></li> -->
+              </ul>
+            </nav>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class=flashes>

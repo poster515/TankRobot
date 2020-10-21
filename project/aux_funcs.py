@@ -2,7 +2,7 @@
 import RPi.GPIO as GPIO
 import time
 
-#Definition of  ultrasonic module pins
+#Definition of ultrasonic module pins
 EchoPin = 0
 TrigPin = 1
 
