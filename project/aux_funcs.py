@@ -16,8 +16,8 @@ Servo_sensor = 23
 Servo_cam_x_y = 11
 Servo_cam_z = 9
 
-def servo_test():
-    Servo_sensor = 23
+def servo_test(pin: int = 23):
+    Servo_sensor = pin
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(Servo_sensor, GPIO.OUT)

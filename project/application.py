@@ -47,9 +47,9 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
     LED_B = 24
 
     #Definition of servo pin
-    Servo_sensor = 23
-    Servo_cam_x_y = 11
-    Servo_cam_z = 9
+    servo_sensor = 23
+    servo_cam_x_y = 11
+    servo_cam_z = 9
 
     if not DEV:
         import RPi.GPIO as GPIO
@@ -74,16 +74,16 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         GPIO.setup(LED_R, GPIO.OUT)
         GPIO.setup(LED_G, GPIO.OUT)
         GPIO.setup(LED_B, GPIO.OUT)
-        GPIO.setup(Servo_sensor, GPIO.OUT)
-        GPIO.setup(Servo_cam_x_y, GPIO.OUT)
-        GPIO.setup(Servo_cam_z, GPIO.OUT)
+        GPIO.setup(servo_sensor, GPIO.OUT)
+        GPIO.setup(servo_cam_x_y, GPIO.OUT)
+        GPIO.setup(servo_cam_z, GPIO.OUT)
 
         # PWM Initialization
         pwm_ENA = GPIO.PWM(ENA, 2000) # 50 Hz PWM signal
         pwm_ENB = GPIO.PWM(ENB, 2000)
-        pwm_servo_sensor = GPIO.PWM(Servo_sensor, 50)
-        pwm_servo_cam_x_y = GPIO.PWM(Servo_cam_x_y, 50)
-        pwm_servo_cam_z = GPIO.PWM(Servo_cam_z, 50)
+        pwm_servo_sensor = GPIO.PWM(servo_sensor, 50)
+        pwm_servo_cam_x_y = GPIO.PWM(servo_cam_x_y, 50)
+        pwm_servo_cam_z = GPIO.PWM(servo_cam_z, 50)
 
         pwm_ENA.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
         pwm_ENB.start(0)
@@ -532,6 +532,24 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             if not DEV:
                 t = threading.Thread(target=os.system('uvccapture -v -m -x1280 -y960'), args=())
                 t.start()
+
+        except:
+            print("non-registered user has requested to take picture")
+        # javascript requires a return statement
+        return "Success"
+
+    @app.route('/servo_x_y_start')
+    def servo_x_y_start():
+        db_conn = create_connection(database)
+        try:
+            user_name = session["user_name"]
+            IP_addr = session["IP_addr"]
+            (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
+            assert user_name == next_user
+            assert next_user_IP == IP_addr
+            print("User {} is panning camera!".format(user_name))
+            if not DEV:
+                # TODO: change duty cycle
 
         except:
             print("non-registered user has requested to take picture")
