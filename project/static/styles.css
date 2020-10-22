@@ -72,6 +72,8 @@ main
     background-size:100% 100%;
     /* center contents */
     text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
 /* flashed messages */
@@ -79,7 +81,6 @@ ul {
    font-weight: bold;
    text-align: center;
 }
-
 /* waiting room list of users */
 /* one column  */
 .wait-grid-container {
@@ -96,7 +97,7 @@ ul {
   font-size: 30px;
   font-weight: bold;
 }
-.wait-grid-containerr > div:nth-child(even) {
+.wait-grid-container > div:nth-child(even) {
     background-color: #32a844;
 }
 .wait-grid-container > div:nth-child(odd) {

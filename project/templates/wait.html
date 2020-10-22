@@ -6,8 +6,12 @@
 
 {% block main %}
     <div>
-      <div class="wait-grid-container">
+      <!-- hidden button to take user to drive page -->
+      <div class="wait-grid-container" id="drive-button-table">
+        <!-- <button id="drive_button" class="btn btn-primary"></button> -->
+      </div>
 
+      <div class="wait-grid-container" id="wait-table">
         {% if user_names %}
           {% for user in user_names %}
             <div class="wait-grid-item">{{ user }}</div>
@@ -15,12 +19,11 @@
         {% else %}
           <div class="wait-grid-item">No users are waiting! Go sign up ya dingus!</div>
         {% endif %}
-        <!-- hidden button to take user to drive page -->
-        <div class="wait-grid-item"><button id="drive_button" class="btn btn-primary"></button></div>
+
       </div>
 
       <script>
-        document.getElementById('drive_button').style.visibility="hidden";
+        // document.getElementById('drive_button').style.visibility="hidden";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = "False";
@@ -30,7 +33,16 @@
                 } else {
                   my_turn = data.is_it_my_turn;
                   if (my_turn == "True") {
-                      document.getElementById('drive_button').style.visibility="visible";
+                      // document.getElementById('drive_button').style.visibility="visible";
+                      // document.getElementById("drive_button").onclick = function () {
+                      //     location.href = "/drive";
+                      // };s
+                      // EXPERIMENTAL
+                      var btn = document.createElement("BUTTON");   // Create a <button> element
+                      btn.setAttribute('class', 'btn btn-default'); // add the right class
+                      btn.setAttribute('id', 'drive_button');       // add the right ID
+                      var t = document.getElementById("drive-button-table");
+                      t.appendChild(btn);
                       document.getElementById("drive_button").onclick = function () {
                           location.href = "/drive";
                       };
