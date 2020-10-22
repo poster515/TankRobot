@@ -550,7 +550,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             print("User {} is panning camera!".format(user_name))
             if not DEV:
                 # TODO: change duty cycle
-
+                pass
         except:
             print("non-registered user has requested to take picture")
         # javascript requires a return statement
