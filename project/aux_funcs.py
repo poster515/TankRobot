@@ -16,6 +16,35 @@ Servo_sensor = 23
 Servo_cam_x_y = 11
 Servo_cam_z = 9
 
+def servo_test():
+    Servo_sensor = 23
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(Servo_sensor, GPIO.OUT)
+    p = GPIO.PWM(Servo_sensor, 50) # 50 Hz PWM signal
+    p.start(2.5) # Initialization
+    try:
+        while True:
+            p.ChangeDutyCycle(5)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(7.5)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(10)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(12.5)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(10)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(7.5)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(5)
+            time.sleep(0.5)
+            p.ChangeDutyCycle(2.5)
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        p.stop()
+        GPIO.cleanup()
+
 #Motor pins are initialized into output mode
 #Key pin is initialized into input mode
 #Ultrasonic pin,RGB pin,servo pin initialization
