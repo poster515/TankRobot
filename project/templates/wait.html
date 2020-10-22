@@ -7,9 +7,7 @@
 {% block main %}
     <div>
       <!-- hidden button to take user to drive page -->
-      <div class="wait-grid-container" id="drive-button-table">
-        <!-- <button id="drive_button" class="btn btn-primary"></button> -->
-      </div>
+      <div class="wait-grid-container" id="drive-button-table"></div>
 
       <div class="wait-grid-container" id="wait-table">
         {% if user_names %}
@@ -23,7 +21,6 @@
       </div>
 
       <script>
-        // document.getElementById('drive_button').style.visibility="hidden";
         // check if it's this user's turn once every second
         var x = setInterval(function() {
             var my_turn = "False";
@@ -33,11 +30,8 @@
                 } else {
                   my_turn = data.is_it_my_turn;
                   if (my_turn == "True") {
-                      // document.getElementById('drive_button').style.visibility="visible";
-                      // document.getElementById("drive_button").onclick = function () {
-                      //     location.href = "/drive";
-                      // };s
-                      // EXPERIMENTAL
+                      // clear the interval, create a new button, and count down
+                      clearInterval(x);
                       var btn = document.createElement("BUTTON");   // Create a <button> element
                       btn.setAttribute('class', 'btn btn-default'); // add the right class
                       btn.setAttribute('id', 'drive_button');       // add the right ID
