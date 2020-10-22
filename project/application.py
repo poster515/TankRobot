@@ -252,6 +252,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
 
         except (AssertionError, TypeError):
             print("Directing user to wait, it's not their dang turn!!")
+            flash("Added {} to queue! We'll let you know when it's your turn.".format(user_name))
             return redirect(url_for("wait"))
 
     @app.route("/check_turn")
