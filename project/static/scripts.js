@@ -35,15 +35,15 @@ $(document).ready(function() {
                                                 $.getJSON('/camera', function(data) { /* do nothing */});
                                                 return false; });
 
-    $('a#servo_x_y').bind('mousedown', function() { $.getJSON('/servo_x_y_start', function(data) { /* do nothing */}); return false; });
-    $('a#servo_x_y').bind('mouseup', function() { $.getJSON('/servo_x_y_stop', function(data) { /* do nothing */}); return false; });
-    $('a#servo_x_y').bind('click', function(event) { event.preventDefault(); return false; });
-    $('a#servo_x_y').bind('touchstart', function() { $.getJSON('/servo_x_y_start', function(data) { /* do nothing */}); return false; });
-    $('a#servo_x_y').bind('touchend', function() { $.getJSON('/servo_x_y_stop', function(data) { /* do nothing */}); return false; });
-
-    $('a#servo_z').bind('mousedown', function() { $.getJSON('/servo_z_start', function(data) { /* do nothing */}); return false; });
-    $('a#servo_z').bind('mouseup', function() { $.getJSON('/servo_z_stop', function(data) { /* do nothing */}); return false; });
-    $('a#servo_z').bind('click', function(event) { event.preventDefault(); return false; });
-    $('a#servo_z').bind('touchstart', function() { $.getJSON('/servo_z_start', function(data) { /* do nothing */}); return false; });
-    $('a#servo_z').bind('touchend', function() { $.getJSON('/servo_z_stop', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_x_y').bind('mousedown', function() { $.getJSON('/servo_x_y_start', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_x_y').bind('mouseup', function() { $.getJSON('/servo_x_y_stop', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_x_y').bind('click', function(event) { event.preventDefault(); return false; });
+    // $('a#servo_x_y').bind('touchstart', function() { $.getJSON('/servo_x_y_start', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_x_y').bind('touchend', function() { $.getJSON('/servo_x_y_stop', function(data) { /* do nothing */}); return false; });
+    //
+    // $('a#servo_z').bind('mousedown', function() { $.getJSON('/servo_z_start', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_z').bind('mouseup', function() { $.getJSON('/servo_z_stop', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_z').bind('click', function(event) { event.preventDefault(); return false; });
+    // $('a#servo_z').bind('touchstart', function() { $.getJSON('/servo_z_start', function(data) { /* do nothing */}); return false; });
+    // $('a#servo_z').bind('touchend', function() { $.getJSON('/servo_z_stop', function(data) { /* do nothing */}); return false; });
 });

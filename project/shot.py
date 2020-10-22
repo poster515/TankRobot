@@ -7,3 +7,10 @@ def pour_shot():
     GPIO.output(PUMP, GPIO.LOW)
     time.sleep(3) # seconds
     GPIO.output(PUMP, GPIO.HIGH)
+
+def servo_move(servo_pwm, servo_pin, desired_pos):
+    """
+    Moves the provided servo to the desired position
+    over the course of 1 second.
+    """
+    pass
