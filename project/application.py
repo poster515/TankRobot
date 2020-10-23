@@ -538,7 +538,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # javascript requires a return statement
         return "Success"
 
-    @app.route('/servo_x_y_move', methods=["POST"])
+    @app.route('/servo_x_y_move')
     def servo_x_y_move():
         db_conn = create_connection(database)
         try:
@@ -550,7 +550,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             print("User {} is panning camera!".format(user_name))
             if not DEV:
                 try:
-                    req = request.get_json()
+                    # req = request.get_json()
+                    req = request.args.get('language')
                     print(req)
                     t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_x_y, servo_cam_x_y, req["pwm"]))
                     t.start()
@@ -561,7 +562,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # javascript requires a return statement
         return "Success"
 
-    @app.route('/servo_z_move', methods=["POST"])
+    @app.route('/servo_z_move')
     def servo_z_move():
         db_conn = create_connection(database)
         try:
