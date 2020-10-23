@@ -16,4 +16,4 @@ def servo_move(servo_pwm, servo_pin, desired_pos):
     if 2.4 < float(desired_pos) < 12.6:
         # account for a little wiggle in value
         print("moving servo {} to position {}".format(servo_pwm, desired_pos))
-        servo_pwm.ChangeDutyCycle(desired_pos)
+        servo_pwm.ChangeDutyCycle(float(desired_pos))
