@@ -37,7 +37,7 @@
           <div class="slidecontainer"><input type="range" min="2.5" max="12.5" value="7.5" class="slider" id="servo_z"></div>
         </div>
       </div>
-
+        <p>Value: <span id="demo"></span></p>
       <script>
       // Update the count down every 1 second
       var x = setInterval(function() {
@@ -76,13 +76,11 @@
 
       // Update the current slider value (each time you drag the slider handle)
       slider_x_y.oninput = function() {
-        var data = { pwm : this.value };
-        $.getJSON('/servo_x_y_move', data, function(data) { /* do nothing */});
+        $.getJSON('/servo_x_y_move', { pwm : this.value }, function(data) { /* do nothing */});
         // output.innerHTML = this.value;
       }
       slider_z.oninput = function() {
-        var data = { pwm : this.value };
-        $.getJSON('/servo_z_move', data, function(data) { /* do nothing */});
+        $.getJSON('/servo_z_move', { pwm : this.value }, function(data) { /* do nothing */});
         // output.innerHTML = this.value;
       }
       </script>
