@@ -17,4 +17,4 @@ def servo_move(servo_pwm, servo_pin, desired_pos):
         # account for a little wiggle in value
         print("moving servo {} to position {}".format(servo_pwm, desired_pos))
         servo_pwm.ChangeDutyCycle(float(desired_pos))
-        servo_pwm.start(0)
+        
