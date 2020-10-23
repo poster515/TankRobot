@@ -13,6 +13,7 @@ def servo_move(servo_pwm, servo_pin, desired_pos):
     Moves the provided servo to the desired position
     over the course of 1 second.
     """
-    if 2.4 < desired_pos < 12.6:
+    if 2.4 < float(desired_pos) < 12.6:
         # account for a little wiggle in value
+        print("moving servo {} to position {}".format(servo_pwm, desired_pos))
         servo_pwm.ChangeDutyCycle(desired_pos)
