@@ -87,6 +87,10 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
 
         pwm_ENA.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
         pwm_ENB.start(0)
+        # move servos to half way point and turn off
+        pwm_servo_sensor.ChangeDutyCycle(7.5)
+        pwm_servo_cam_x_y.ChangeDutyCycle(7.5)
+        pwm_servo_cam_z.ChangeDutyCycle(7.5)
         pwm_servo_sensor.start(0)
         pwm_servo_cam_x_y.start(0)
         pwm_servo_cam_z.start(0)
@@ -317,12 +321,15 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             db_conn.cursor().execute("DELETE FROM users WHERE user_name = ? and IP_addr = ?", (user_name, IP_addr))
             db_conn.commit()
 
-            # stop all outputs
+            # stop all outputs and reset servos
             if not DEV:
                 GPIO.output(IN1, GPIO.LOW)
                 GPIO.output(IN2, GPIO.LOW)
                 GPIO.output(IN3, GPIO.LOW)
                 GPIO.output(IN4, GPIO.LOW)
+                pwm_servo_sensor.ChangeDutyCycle(7.5)
+                pwm_servo_cam_x_y.ChangeDutyCycle(7.5)
+                pwm_servo_cam_z.ChangeDutyCycle(7.5)
 
             try:
                 (next_user, next_user_IP, _, _, _, _) = db_conn.cursor().execute("SELECT * FROM users WHERE rowid = (SELECT min(rowid) FROM users);").fetchone()
@@ -551,9 +558,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             if not DEV:
                 try:
                     # req = request.get_json()
-                    req = request.args.get('pwm')
-                    print(req)
-                    t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_x_y, servo_cam_x_y, req["pwm"]))
+                    pos = request.args.get('pwm')
+                    t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_x_y, servo_cam_x_y, pos))
                     t.start()
                 except:
                     print("error parsing JSON data from servo_x_y slider.")
@@ -574,9 +580,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             print("User {} is tilting camera!".format(user_name))
             if not DEV:
                 try:
-                    req = request.get_json()
-                    print(req)
-                    t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_z, servo_cam_z, req["pwm"]))
+                    pos = request.args.get('pwm')
+                    t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_z, servo_cam_z, pos))
                     t.start()
                 except:
                     print("error parsing JSON data from servo_z slider.")

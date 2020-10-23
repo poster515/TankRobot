@@ -13,4 +13,6 @@ def servo_move(servo_pwm, servo_pin, desired_pos):
     Moves the provided servo to the desired position
     over the course of 1 second.
     """
-    pass
+    if 2.4 < desired_pos < 12.6:
+        # account for a little wiggle in value
+        servo_pwm.ChangeDutyCycle(desired_pos)
