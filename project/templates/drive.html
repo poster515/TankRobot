@@ -24,11 +24,6 @@
         <div class="grid-item"><a href=# id=reverse><button class="btn btn-default">Reverse</button></a></div>
         <div class="grid-item"></div>
         <!-- fourth row -->
-        <!-- <div class="grid-item"><a href=# id=servo_x_y><button class="btn btn-default">Camera Pan</button></a></div>
-        <div class="grid-item"><a href=# id=pic><button class="btn btn-default"">Picture!</button></a></div>
-        <div class="grid-item"><a href=# id=servo_z><button class="btn btn-default">Camera Z</button></a></div> -->
-
-        <!-- EXPERIMENTAL -->
         <div class="grid-item">
           <div class="slidecontainer"><input type="range" min="2.5" max="12.5" value="7.5" class="slider" id="servo_x_y"></div>
         </div>
@@ -37,7 +32,7 @@
           <div class="slidecontainer"><input type="range" min="5.5" max="8.5" value="7" class="slider" id="servo_z"></div>
         </div>
       </div>
-        <p>Value: <span id="demo"></span></p>
+        <!-- <p>Value: <span id="demo"></span></p> -->
       <script>
       // Update the count down every 1 second
       var x = setInterval(function() {
@@ -71,19 +66,19 @@
 
       var slider_x_y = document.getElementById("servo_x_y");
       var slider_z = document.getElementById("servo_z");
-      var output = document.getElementById("demo");
+      // var output = document.getElementById("demo");
       // output.innerHTML = slider.value; // Display the default slider value
 
       // Update the current slider value (each time you drag the slider handle)
       slider_x_y.oninput = function() {
         // between 2.5 and 12.5
         $.getJSON('/servo_x_y_move', { pwm : this.value }, function(data) { /* do nothing */});
-        output.innerHTML = this.value;
+        // output.innerHTML = this.value;
       }
       slider_z.oninput = function() {
         // between 5.5 and 8
         $.getJSON('/servo_z_move', { pwm : this.value }, function(data) { /* do nothing */});
-        output.innerHTML = this.value;
+        // output.innerHTML = this.value;
       }
       </script>
 
