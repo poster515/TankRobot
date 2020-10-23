@@ -538,7 +538,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # javascript requires a return statement
         return "Success"
 
-    @app.route('/servo_x_y_move')
+    @app.route('/servo_x_y_move', methods=["POST"])
     def servo_x_y_move():
         db_conn = create_connection(database)
         try:
@@ -561,7 +561,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # javascript requires a return statement
         return "Success"
 
-    @app.route('/servo_z_move')
+    @app.route('/servo_z_move', methods=["POST"])
     def servo_z_move():
         db_conn = create_connection(database)
         try:
