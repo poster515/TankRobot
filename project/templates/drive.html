@@ -34,7 +34,7 @@
         </div>
         <div class="grid-item"><a href=# id=pic><button class="btn btn-default"">Picture!</button></a></div>
         <div class="grid-item">
-          <div class="slidecontainer"><input type="range" min="2.5" max="12.5" value="7.5" class="slider" id="servo_z"></div>
+          <div class="slidecontainer"><input type="range" min="5.5" max="8.5" value="7" class="slider" id="servo_z"></div>
         </div>
       </div>
         <p>Value: <span id="demo"></span></p>
@@ -76,10 +76,12 @@
 
       // Update the current slider value (each time you drag the slider handle)
       slider_x_y.oninput = function() {
+        // between 2.5 and 12.5
         $.getJSON('/servo_x_y_move', { pwm : this.value }, function(data) { /* do nothing */});
         output.innerHTML = this.value;
       }
       slider_z.oninput = function() {
+        // between 5.5 and 8
         $.getJSON('/servo_z_move', { pwm : this.value }, function(data) { /* do nothing */});
         output.innerHTML = this.value;
       }
