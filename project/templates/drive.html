@@ -77,6 +77,12 @@
       // Update the current slider value (each time you drag the slider handle)
       slider_x_y.oninput = function() {
         $.getJSON('/servo_x_y_move', { pwm : this.value }, function(data) { /* do nothing */});
+        // $.ajax({
+        //   dataType: "json",
+        //   url: '/servo_x_y_move',
+        //   data: { pwm : this.value },
+        //   success: success
+        // });
         output.innerHTML = this.value;
       }
       slider_z.oninput = function() {

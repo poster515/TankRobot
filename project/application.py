@@ -551,7 +551,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             if not DEV:
                 try:
                     # req = request.get_json()
-                    req = request.args.get('language')
+                    req = request.args.get('pwm')
                     print(req)
                     t = threading.Thread(target=shot.servo_move, args=(pwm_servo_cam_x_y, servo_cam_x_y, req["pwm"]))
                     t.start()
