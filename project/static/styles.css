@@ -151,16 +151,16 @@ ul {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
-  width: 50px; /* Set a specific slider handle width */
-  height: 50px;
+  width: 40px; /* Set a specific slider handle width */
+  height: 40px;
   border-radius: 50%;
   background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
-  width: 50px; /* Set a specific slider handle width */
-  height: 50px; /* Slider handle height */
+  width: 40px; /* Set a specific slider handle width */
+  height: 40px; /* Slider handle height */
   background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
