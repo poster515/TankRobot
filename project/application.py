@@ -545,7 +545,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("User {} took a picture!".format(user_name))
             if not DEV:
-                count = len(glob.glob1("/home/pi/","*.jpg"))
+                count = len(glob.glob1("/home/pi/TankRobot/","*.jpg"))
                 t = os.system('sudo uvccapture -v -m -x1280 -y960 -osnap{}.jpg'.format(count))
 
 
