@@ -9,6 +9,7 @@ import time
 import string
 import os, sys
 import threading
+import pigpio as ppo
 
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
@@ -81,19 +82,33 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # PWM Initialization
         pwm_ENA = GPIO.PWM(ENA, 2000) # 50 Hz PWM signal
         pwm_ENB = GPIO.PWM(ENB, 2000)
-        pwm_servo_sensor = GPIO.PWM(servo_sensor, 50)
-        pwm_servo_cam_x_y = GPIO.PWM(servo_cam_x_y, 50)
-        pwm_servo_cam_z = GPIO.PWM(servo_cam_z, 50)
+
+        # pwm_servo_sensor = GPIO.PWM(servo_sensor, 50)
+        # pwm_servo_cam_x_y = GPIO.PWM(servo_cam_x_y, 50)
+        # pwm_servo_cam_z = GPIO.PWM(servo_cam_z, 50)
+        pwm_servo_sensor = ppo.pi()
+        pwm_servo_sensor.set_mode(servo, ppo.OUTPUT)
+        pwm_servo_sensor.set_PWM_frequency(servo_sensor, 50)
+        pwm_servo_cam_x_y = ppo.pi()
+        pwm_servo_cam_x_y.set_mode(servo, ppo.OUTPUT)
+        pwm_servo_cam_x_y.set_PWM_frequency(servo_cam_x_y, 50)
+        pwm_servo_cam_z = ppo.pi()
+        pwm_servo_cam_z.set_mode(servo, ppo.OUTPUT)
+        pwm_servo_cam_z.set_PWM_frequency(servo_cam_z, 50)
 
         pwm_ENA.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
         pwm_ENB.start(0)
         # move servos to half way point and turn off
-        pwm_servo_sensor.start(0)
-        pwm_servo_cam_x_y.start(0)
-        pwm_servo_cam_z.start(0)
-        pwm_servo_sensor.ChangeDutyCycle(2.5) # just keep it here. 
-        pwm_servo_cam_x_y.ChangeDutyCycle(7.5) # between 2.5 and 12.5
-        pwm_servo_cam_z.ChangeDutyCycle(7.5) # between 5.5 and 8
+        # pwm_servo_sensor.start(0)
+        # pwm_servo_cam_x_y.start(0)
+        # pwm_servo_cam_z.start(0)
+
+        pwm_servo_sensor.set_servo_pulsewidth(servo_sensor, 500);
+        pwm_servo_cam_x_y.set_servo_pulsewidth(servo_cam_x_y, 500);
+        pwm_servo_cam_z.set_servo_pulsewidth(servo_cam_z, 500);
+        # pwm_servo_sensor.ChangeDutyCycle(2.5) # just keep it here.
+        # pwm_servo_cam_x_y.ChangeDutyCycle(7.5) # between 2.5 and 12.5
+        # pwm_servo_cam_z.ChangeDutyCycle(7.5) # between 5.5 and 8
 
 
     # Configure application
