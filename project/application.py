@@ -546,8 +546,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             print("User {} took a picture!".format(user_name))
             if not DEV:
                 count = len(glob.glob1("/home/pi/","*.jpg"))
-                t = os.system('uvccapture -v -m -x1280 -y960 -osnap{}.jpg'.format(count))
-                
+                t = os.system('sudo uvccapture -v -m -x1280 -y960 -osnap{}.jpg'.format(count))
+
 
         except:
             print("non-registered user has requested to take picture")
