@@ -9,6 +9,7 @@ import time
 import string
 import os, sys
 import threading
+import glob
 
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
@@ -544,7 +545,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("User {} took a picture!".format(user_name))
             if not DEV:
-                t = threading.Thread(target=os.system('uvccapture -v -m -x1280 -y960'), args=())
+                count = len(glob.glob1("/home/pi","*.jpg"))
+                t = threading.Thread(target=os.system('uvccapture -m -x1280 -y960 -osnap{}.jpg'.format(count)), args=())
                 t.start()
 
         except:
