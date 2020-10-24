@@ -91,7 +91,7 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         pwm_servo_sensor.start(0)
         pwm_servo_cam_x_y.start(0)
         pwm_servo_cam_z.start(0)
-        pwm_servo_sensor.ChangeDutyCycle(7.5)
+        pwm_servo_sensor.ChangeDutyCycle(2.5) # just keep it here. 
         pwm_servo_cam_x_y.ChangeDutyCycle(7.5) # between 2.5 and 12.5
         pwm_servo_cam_z.ChangeDutyCycle(7.5) # between 5.5 and 8
 
