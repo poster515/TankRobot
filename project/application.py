@@ -9,7 +9,6 @@ import time
 import string
 import os, sys
 import threading
-import pigpio as ppo
 
 # import sql db functions (file should be in same directory)
 from project.sql_funcs import create_connection, create_table, sql_table_func
@@ -47,14 +46,17 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
     LED_G = 27
     LED_B = 24
 
-    #Definition of servo pin
+    #Definition of servo pins
     servo_sensor = 23
     servo_cam_x_y = 11
     servo_cam_z = 9
 
     if not DEV:
+        # import raspberry pi-specific packages
         import RPi.GPIO as GPIO
         import project.shot as shot
+        import pigpio as ppo
+
         #Set the GPIO port to BCM encoding mode
         GPIO.setmode(GPIO.BCM)
         #Ignore warning information
@@ -75,14 +77,12 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         GPIO.setup(LED_R, GPIO.OUT)
         GPIO.setup(LED_G, GPIO.OUT)
         GPIO.setup(LED_B, GPIO.OUT)
-        # GPIO.setup(servo_sensor, GPIO.OUT)
-        # GPIO.setup(servo_cam_x_y, GPIO.OUT)
-        # GPIO.setup(servo_cam_z, GPIO.OUT)
 
         # PWM Initialization
         pwm_ENA = GPIO.PWM(ENA, 2000) # 50 Hz PWM signal
         pwm_ENB = GPIO.PWM(ENB, 2000)
 
+        # pigpio servo declaration/initialization
         pwm_servo_sensor = ppo.pi()
         pwm_servo_sensor.set_mode(servo_sensor, ppo.OUTPUT)
         pwm_servo_sensor.set_PWM_frequency(servo_sensor, 50)
@@ -93,8 +93,10 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         pwm_servo_cam_z.set_mode(servo_cam_z, ppo.OUTPUT)
         pwm_servo_cam_z.set_PWM_frequency(servo_cam_z, 50)
 
-        pwm_ENA.start(0) # start PWM of with Duty Cycle 0 (i.e., off)
+        # start motor PWMs with Duty Cycle 0 (i.e., off)
+        pwm_ENA.start(0)
         pwm_ENB.start(0)
+
         # move servos to half way point
         pwm_servo_sensor.set_servo_pulsewidth(servo_sensor, 500);
         pwm_servo_cam_x_y.set_servo_pulsewidth(servo_cam_x_y, 1600); # between 700 and 2500
