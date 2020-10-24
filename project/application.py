@@ -104,8 +104,8 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
         # pwm_servo_cam_z.start(0)
 
         pwm_servo_sensor.set_servo_pulsewidth(servo_sensor, 500);
-        pwm_servo_cam_x_y.set_servo_pulsewidth(servo_cam_x_y, 500);
-        pwm_servo_cam_z.set_servo_pulsewidth(servo_cam_z, 500);
+        pwm_servo_cam_x_y.set_servo_pulsewidth(servo_cam_x_y, 1600); # between 700 and 2500
+        pwm_servo_cam_z.set_servo_pulsewidth(servo_cam_z, 1500); # between 1000 and 2000
         # pwm_servo_sensor.ChangeDutyCycle(2.5) # just keep it here.
         # pwm_servo_cam_x_y.ChangeDutyCycle(7.5) # between 2.5 and 12.5
         # pwm_servo_cam_z.ChangeDutyCycle(7.5) # between 5.5 and 8
