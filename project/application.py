@@ -479,15 +479,15 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
             assert next_user_IP == IP_addr
             print("User {} started going forward".format(user_name))
             if not DEV:
-                if Distance() > 3: # 3 inches, to avoid running into something
-                    GPIO.output(IN1, GPIO.HIGH)
-                    GPIO.output(IN2, GPIO.LOW)
-                    GPIO.output(IN3, GPIO.HIGH)
-                    GPIO.output(IN4, GPIO.LOW)
-                    pwm_ENA.ChangeDutyCycle(50)
-                    pwm_ENB.ChangeDutyCycle(50)
-                else:
-                    print("Can't move forward, distance = {}".format(Distance()))
+                # if Distance() > 3: # 3 inches, to avoid running into something
+                GPIO.output(IN1, GPIO.HIGH)
+                GPIO.output(IN2, GPIO.LOW)
+                GPIO.output(IN3, GPIO.HIGH)
+                GPIO.output(IN4, GPIO.LOW)
+                pwm_ENA.ChangeDutyCycle(50)
+                pwm_ENB.ChangeDutyCycle(50)
+                # else:
+                #     print("Can't move forward, distance = {}".format(Distance()))
         except:
             print("non-registered user has requested to start")
         # javascript requires a return statement
