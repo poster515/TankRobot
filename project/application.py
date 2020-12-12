@@ -548,7 +548,6 @@ def create_app(DEV: bool = True, wait_timeout: int = 60, drive_timeout: int = 60
                 count = len(glob.glob1("/home/pi/TankRobot/","*.jpg"))
                 t = os.system('sudo uvccapture -v -m -x1280 -y960 -osnap{}.jpg'.format(count))
 
-
         except:
             print("non-registered user has requested to take picture")
         # javascript requires a return statement

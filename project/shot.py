@@ -5,7 +5,7 @@ def pour_shot():
     PUMP = 2 # IO2 is the fan aka pump output
     # pump is active low (i.e., turn low to turn on)
     GPIO.output(PUMP, GPIO.LOW)
-    time.sleep(3) # seconds
+    time.sleep(20) # seconds
     GPIO.output(PUMP, GPIO.HIGH)
 
 def servo_move(servo_pwm, servo_pin, desired_pos):
